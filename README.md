@@ -12,11 +12,11 @@ Built by **Sharief Abdelmonem · AI Integration Coach** (#ai_with_sharief).
 
 | AI | Download | Upload it from |
 |---|---|---|
-| **Claude** | [⬇ ZIP](https://github.com/shariefabdelmonem-netizen/interactive-html-presentation/raw/main/interactive-html-presentation.zip) | **Customize → Skills → + → Create skill → Upload a skill** |
-| **ChatGPT** | [⬇ ZIP](https://github.com/shariefabdelmonem-netizen/interactive-html-presentation/raw/main/interactive-html-presentation.zip) | **Skills → Create → Upload from your computer** |
-| **Gemini** | [⬇ SKILL.md](https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/SKILL.md) | **Settings → Skills → Create → Upload** (gemini.google.com) |
+| **Claude** | [⬇ SKILL.md](https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/SKILL.md) | **Customize → Skills → + Add → Upload skill** |
+| **ChatGPT** | [⬇ SKILL.md](https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/SKILL.md) | **Customize (@) → Skills → Add → Create skill**, then attach the file and say "Install this skill" |
+| **Gemini** | [⬇ SKILL.md](https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/SKILL.md) | **Customize → Skills → Create → Upload** (gemini.google.com, no ZIP) |
 
-Upload the ZIP as it is, don't unzip it. Step-by-step guide with fixes for common errors (Arabic): **[install.html](https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/install.html)**
+A [ZIP version](https://github.com/shariefabdelmonem-netizen/interactive-html-presentation/raw/main/interactive-html-presentation.zip) also works in Claude and ChatGPT. Step-by-step guide with fixes for common errors (Arabic): **[install.html](https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/install.html)**
 
 Then ask: *"Make an interactive presentation about …"*, or call it by name with `/interactive-html-presentation`.
 
