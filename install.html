@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>رفع Skill على Claude وChatGPT وGemini</title>
+<meta name="description" content="دليل خطوة بخطوة لرفع ملف SKILL.md على Claude وChatGPT وGemini، مع حلول للأخطاء الشائعة.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: hero, quick comparison table, one tab per AI with numbered steps, then fixes for common errors.
+     Each AI keeps its own accent so the reader always knows which app the steps belong to. */
+  --bg:#f5f6fb;
+  --card:#ffffff;
+  --ink:#171b2e;
+  --muted:#5b6280;
+  --line:#e1e5f0;
+  --claude:#c2603c;
+  --gpt:#0e8f6f;
+  --gem:#3d6be0;
+  --warn:#a35f00;
+  --display:"Readex Pro","IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --body:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.75;font-size:17px}
+main{max-width:980px;margin:0 auto;padding:40px 18px 80px;display:flex;flex-direction:column;gap:46px}
+a{color:var(--gem)}
+:focus-visible{outline:3px solid var(--gem);outline-offset:3px;border-radius:6px}
+h1{font:700 clamp(30px,5vw,46px)/1.25 var(--display);margin:0 0 12px;text-wrap:balance}
+h2{font:700 clamp(23px,3vw,28px)/1.3 var(--display);margin:0 0 14px}
+h3{font:600 20px/1.4 var(--display);margin:0 0 8px}
+p{margin:0}
+.lead{font-size:19px;color:var(--muted);max-width:62ch}
+.en{font-family:"Segoe UI",system-ui,sans-serif;direction:ltr;unicode-bidi:isolate;font-weight:600;background:#eef1f8;border-radius:6px;padding:1px 7px;font-size:.93em;white-space:nowrap}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;direction:ltr;unicode-bidi:isolate;background:#eef1f8;border-radius:6px;padding:1px 6px;font-size:.88em}
+
+.what{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin-top:22px}
+.what svg{width:54px;height:66px}
+.what p{color:var(--muted)}
+.what b{color:var(--ink)}
+
+/* comparison */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th,td{padding:14px 16px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top;font-size:16px}
+th{font:600 15px var(--display);color:var(--muted);background:#fafbfe}
+tr:last-child td{border-bottom:0}
+td.app{font:600 17px var(--display);white-space:nowrap}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-inline-end:8px;vertical-align:1px}
+
+/* tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;border-bottom:2px solid var(--line);margin-bottom:22px}
+.tab{background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;padding:12px 18px;font:600 18px var(--display);color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:8px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--c)}
+.tab:hover{color:var(--ink)}
+.panel{display:none;flex-direction:column;gap:20px}
+.panel.on{display:flex}
+.need{border-radius:14px;padding:16px 18px;background:#fff7ea;border:1px solid #f3dcb3}
+.need h3{font-size:17px;color:var(--warn);margin-bottom:6px}
+.need ul{margin:0;padding-inline-start:20px}
+.need li+li{margin-top:4px}
+.file{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+.file b{font-family:var(--display)}
+.chip{display:inline-flex;align-items:center;gap:6px;font:600 14px var(--body);border-radius:999px;padding:4px 12px;color:#fff;background:var(--c)}
+ol.steps{list-style:none;counter-reset:s;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+ol.steps>li{counter-increment:s;display:grid;grid-template-columns:42px 1fr;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+ol.steps>li::before{content:counter(s);width:36px;height:36px;border-radius:50%;background:var(--c);color:#fff;font:700 17px var(--display);display:grid;place-items:center}
+ol.steps .small{display:block;color:var(--muted);font-size:15px;margin-top:4px}
+.path{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}
+.path .arr{color:var(--muted)}
+.use{background:var(--card);border:1px solid var(--line);border-inline-start:5px solid var(--c);border-radius:14px;padding:16px 18px}
+.use p+p{margin-top:6px}
+
+/* errors */
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 18px}
+details+details{margin-top:12px}
+summary{cursor:pointer;font:600 17px/1.5 var(--display);padding:12px 0;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:24px;line-height:1;color:var(--muted);flex:none}
+details[open] summary::after{content:"−"}
+details .body{padding:0 0 16px;color:var(--muted)}
+details .body ul{margin:6px 0 0;padding-inline-start:20px}
+details .body b{color:var(--ink)}
+
+/* try */
+.try{background:var(--ink);color:#fff;border-radius:20px;padding:26px 24px;display:flex;flex-direction:column;gap:14px}
+.try h2{color:#fff;margin:0}
+.try p{color:#c9cee3}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:12px;font:600 16px var(--display);text-decoration:none;background:#fff;color:var(--ink)}
+.btn.alt{background:transparent;color:#fff;border:1px solid #4a5175}
+.try small{color:#9aa1bf;font-size:14px}
+footer{font-size:15px;color:var(--muted)}
+footer a{color:var(--muted)}
+@media (max-width:520px){ol.steps>li{grid-template-columns:34px 1fr;padding:14px}ol.steps>li::before{width:30px;height:30px;font-size:15px}.tab{padding:10px 12px;font-size:16px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<main>
+
+  <header>
+    <h1>إزاي ترفع Skill على Claude وChatGPT وGemini</h1>
+    <p class="lead">ملف واحد اسمه <code>SKILL.md</code> بيشتغل في التلاتة. الصفحة دي بتوريك ترفعه فين في كل واحد، وتعمل إيه لو ظهرلك خطأ.</p>
+    <div class="what">
+      <svg viewBox="0 0 54 66" aria-hidden="true"><path d="M4 4h32l14 14v44H4z" fill="#fff" stroke="#171b2e" stroke-width="3" stroke-linejoin="round"/><path d="M36 4v14h14" fill="none" stroke="#171b2e" stroke-width="3" stroke-linejoin="round"/><text x="27" y="46" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="13" font-weight="700" fill="#3d6be0">.md</text></svg>
+      <p><b>يعني إيه Skill؟</b> ملف تعليمات بتحفظه مرة واحدة، والـ AI يرجعله لوحده كل ما تطلب الحاجة اللي هو معمول لها. بدل ما تلصق نفس البرومبت الطويل كل مرة.</p>
+    </div>
+  </header>
+
+  <section aria-labelledby="cmp">
+    <h2 id="cmp">بسرعة: كل واحد بياخد إيه</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>الـ AI</th><th>ارفع إيه</th><th>من فين</th><th>متاح لمين</th></tr></thead>
+        <tbody>
+          <tr><td class="app"><span class="dot" style="background:var(--claude)"></span>Claude</td><td>ملف <b>ZIP</b> جواه فولدر فيه <code>SKILL.md</code></td><td>الموقع وتطبيق الكمبيوتر</td><td>الخطط الشخصية، وفي Team وEnterprise لازم الأدمن يفعّلها</td></tr>
+          <tr><td class="app"><span class="dot" style="background:var(--gpt)"></span>ChatGPT</td><td>ملف <b>ZIP</b> أو فولدر الـ skill</td><td>الموقع</td><td>رسمياً Business وEnterprise وEdu، وممكن ما تظهرش في الحسابات الشخصية</td></tr>
+          <tr><td class="app"><span class="dot" style="background:var(--gem)"></span>Gemini</td><td>ملف <code>SKILL.md</code> لوحده (الأسهل) أو ZIP</td><td>gemini.google.com وتطبيق الماك، مش الموبايل</td><td>الحسابات الشخصية فوق 18 سنة، وحسابات الشغل والمدارس لسه</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="how">
+    <h2 id="how">الخطوات</h2>
+    <div class="tabs" role="tablist" aria-label="اختار الـ AI">
+      <button class="tab" role="tab" id="t-claude" aria-controls="claude" style="--c:var(--claude)"><span class="dot" style="background:var(--claude)"></span>Claude</button>
+      <button class="tab" role="tab" id="t-chatgpt" aria-controls="chatgpt" style="--c:var(--gpt)"><span class="dot" style="background:var(--gpt)"></span>ChatGPT</button>
+      <button class="tab" role="tab" id="t-gemini" aria-controls="gemini" style="--c:var(--gem)"><span class="dot" style="background:var(--gem)"></span>Gemini</button>
+    </div>
+
+    <!-- Claude -->
+    <div class="panel" role="tabpanel" id="claude" aria-labelledby="t-claude" style="--c:var(--claude)">
+      <div class="need">
+        <h3>قبل ما تبدأ</h3>
+        <ul>
+          <li>شغّل <span class="en">Code execution and file creation</span> من <span class="en">Settings → Capabilities</span>. الـ skills ما بتشتغلش من غيره.</li>
+          <li>الملف لازم يكون <b>ZIP</b>، وجواه فولدر <b>اسمه نفس اسم الـ skill</b>، وجوه الفولدر <code>SKILL.md</code>.</li>
+        </ul>
+      </div>
+      <div class="file"><span class="chip">الملف</span><b>interactive-html-presentation.zip</b><span>ارفعه زي ما هو، ما تفكّوش</span></div>
+      <ol class="steps">
+        <li><div>افتح <b>claude.ai</b> أو تطبيق Claude على الكمبيوتر.</div></li>
+        <li><div>روح لصفحة الـ Skills.
+          <div class="path"><span class="en">Customize</span><span class="arr">←</span><span class="en">Skills</span></div>
+          <span class="small">في بعض الحسابات بتلاقيها في <span class="en">Settings → Capabilities</span> تحت قسم Skills.</span></div></li>
+        <li><div>دوس <span class="en">+</span> وبعدين <span class="en">Create skill</span>، واختار <span class="en">Upload a skill</span>.</div></li>
+        <li><div>اختار ملف الـ ZIP أو اسحبه في المربع.</div></li>
+        <li><div>هتلاقي الـ skill في القائمة. اتأكد إن المفتاح اللي جنبها <b>شغال</b>.</div></li>
+      </ol>
+      <div class="use"><h3>تستخدمها إزاي</h3><p>اطلب الحاجة عادي، وClaude بيستخدم الـ skill لوحده لما الطلب يناسبها. أو اذكر اسمها صريح في طلبك، زي: "استخدم interactive-html-presentation واعملي عرض عن …"</p></div>
+    </div>
+
+    <!-- ChatGPT -->
+    <div class="panel" role="tabpanel" id="chatgpt" aria-labelledby="t-chatgpt" style="--c:var(--gpt)">
+      <div class="need">
+        <h3>قبل ما تبدأ</h3>
+        <ul>
+          <li>OpenAI بتقول إن الـ Skills متاحة لحسابات <b>Business وEnterprise وHealthcare وEdu</b>. لو حسابك Plus أو مجاني ممكن ما تلاقيش صفحة Skills، شوف الحل تحت في الأخطاء.</li>
+          <li>في حسابات الشغل، الأدمن ممكن يكون قافل رفع الـ skills.</li>
+          <li>أماكن القوايم في ChatGPT بتتغير كتير، فلو الاسم مختلف شوية دوّر على كلمة <b>Skills</b>.</li>
+        </ul>
+      </div>
+      <div class="file"><span class="chip">الملف</span><b>interactive-html-presentation.zip</b><span>ارفعه زي ما هو، ما تفكّوش</span></div>
+      <ol class="steps">
+        <li><div>افتح <b>chatgpt.com</b> على الكمبيوتر.</div></li>
+        <li><div>افتح صفحة الـ Skills.
+          <div class="path"><span class="en">Plugins</span><span class="arr">←</span><span class="en">Skills</span></div>
+          <span class="small">أو من أيقونة حسابك: <span class="en">Profile → Skills</span></span></div></li>
+        <li><div>دوس <span class="en">Create</span> وبعدين <span class="en">Upload from your computer</span>.</div></li>
+        <li><div>اختار ملف الـ ZIP.</div></li>
+        <li><div>استنى ثواني. ChatGPT بيعمل فحص أمان للـ skill قبل ما تبقى جاهزة.</div></li>
+      </ol>
+      <div class="use"><h3>تستخدمها إزاي</h3><p>اطلب الحاجة عادي، أو اكتب <span class="en">@</span> واختار الـ skill من القائمة.</p></div>
+    </div>
+
+    <!-- Gemini -->
+    <div class="panel" role="tabpanel" id="gemini" aria-labelledby="t-gemini" style="--c:var(--gem)">
+      <div class="need">
+        <h3>قبل ما تبدأ</h3>
+        <ul>
+          <li>الرفع شغال من <b>gemini.google.com</b> أو تطبيق Gemini على الماك بس، مش من تطبيق الموبايل.</li>
+          <li>الأسهل والأضمن: ارفع ملف <code>SKILL.md</code> <b>لوحده</b>. كده تتجنب مشكلة الملفات المخفية خالص.</li>
+        </ul>
+      </div>
+      <div class="file"><span class="chip">الملف</span><b>SKILL.md</b><span>ملف واحد، من غير فولدر ولا ZIP</span></div>
+      <ol class="steps">
+        <li><div>افتح <b>gemini.google.com</b>.</div></li>
+        <li><div>من القائمة الجانبية افتح صفحة الـ Skills.
+          <div class="path"><span class="en">Settings</span><span class="arr">←</span><span class="en">Skills</span></div></div></li>
+        <li><div>دوس <span class="en">Create</span> وبعدين <span class="en">Upload</span>.
+          <span class="small">في بعض الحسابات الزرار اسمه <span class="en">Upload</span> على طول.</span></div></li>
+        <li><div>اختار ملف <code>SKILL.md</code>.</div></li>
+        <li><div>راجع الاسم والوصف اللي Gemini قراهم من الملف، وبعدين احفظ.</div></li>
+      </ol>
+      <div class="use"><h3>تستخدمها إزاي</h3><p>Gemini بيستخدمها لوحده لما الطلب يناسبها. أو اكتب <span class="en">/</span> في الشات واختار اسمها.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="err">
+    <h2 id="err">لو ظهرلك خطأ</h2>
+
+    <details open>
+      <summary>"The skill folder contains a file with an unsupported file type"</summary>
+      <div class="body">
+        <p>فيه ملف زيادة جوه الفولدر اللي رفعته. أشهر سببين:</p>
+        <ul>
+          <li><b>ملف مخفي من الماك:</b> لما تفتح فولدر في Finder، الماك بيحط جواه ملف مخفي اسمه <code>.DS_Store</code>، والـ AI بيرفضه.</li>
+          <li><b>حمّلت الـ repo كله:</b> زرار <span class="en">Code → Download ZIP</span> في GitHub بينزّل كل الملفات، صور وصفحات. حمّل ملف الـ skill بس.</li>
+        </ul>
+        <p style="margin-top:8px"><b>الحل:</b> في Gemini ارفع <code>SKILL.md</code> لوحده. في Claude وChatGPT ارفع ملف الـ ZIP الجاهز زي ما هو.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>الماك فك الـ ZIP لوحده بعد التحميل</summary>
+      <div class="body">
+        <p>متصفح Safari بيفك ملفات ZIP تلقائياً. عندك حلّين:</p>
+        <ul>
+          <li>حمّل الملف من <b>Chrome</b> أو <b>Edge</b> بدل Safari.</li>
+          <li>أو من <span class="en">Safari → Settings → General</span> اقفل <span class="en">Open "safe" files after downloading</span>، وحمّله تاني.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Claude بيقول إن اسم الفولدر مش مطابق</summary>
+      <div class="body"><p>اسم الفولدر جوه الـ ZIP لازم يكون <b>بالظبط</b> نفس الـ <code>name</code> المكتوب أول ملف <code>SKILL.md</code>: حروف إنجليزي صغيرة وبينها شرطات، زي <code>interactive-html-presentation</code>.</p></div>
+    </details>
+
+    <details>
+      <summary>مش لاقي صفحة Skills خالص</summary>
+      <div class="body">
+        <ul>
+          <li><b>Claude:</b> شغّل <span class="en">Code execution and file creation</span> الأول. ولو حسابك Team أو Enterprise، اطلب من الأدمن يفعّل الـ Skills.</li>
+          <li><b>ChatGPT:</b> غالباً خطة حسابك مش من الخطط المتاحة. الحل البديل: اعمل <b>Project</b> والصق محتوى <code>SKILL.md</code> في التعليمات بتاعته.</li>
+          <li><b>Gemini:</b> افتحه من الكمبيوتر مش الموبايل. ولو داخل بحساب شغل أو مدرسة، الميزة لسه مش متاحة له.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>اترفعت بس الـ AI مش بيستخدمها</summary>
+      <div class="body">
+        <ul>
+          <li>اتأكد إن الـ skill <b>شغالة</b> في القائمة، مش مقفولة.</li>
+          <li>نادِيها بالاسم: اذكر اسمها في طلبك في Claude، أو اكتب <span class="en">/</span> في Gemini و<span class="en">@</span> في ChatGPT واختارها.</li>
+          <li>اكتب طلبك بكلمات قريبة من وصف الـ skill، زي "اعملي عرض تفاعلي عن …".</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>مش عايز أرفع حاجة، عايز أجرّب بس</summary>
+      <div class="body"><p>افتح <code>SKILL.md</code>، انسخ كل اللي فيه، والصقه في أول رسالة في أي شات، وقول "اتبع التعليمات دي". هتشتغل في المحادثة دي بس.</p></div>
+    </details>
+  </section>
+
+  <section class="try" aria-labelledby="try">
+    <h2 id="try">جرّب على skill حقيقية</h2>
+    <p>Interactive HTML Presentation: بتعمل عروض تفاعلية متحركة للحصص والورش من مجرد موضوع وجمهور.</p>
+    <div class="btns">
+      <a class="btn" href="https://github.com/shariefabdelmonem-netizen/interactive-html-presentation/raw/main/interactive-html-presentation.zip">حمّل الـ ZIP (لـ Claude وChatGPT)</a>
+      <a class="btn" href="https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/SKILL.md" download="SKILL.md">حمّل SKILL.md (لـ Gemini)</a>
+      <a class="btn alt" href="https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/">شوف أمثلة للعروض</a>
+    </div>
+    <small>لو ملف SKILL.md اتفتح كنص في المتصفح بدل ما يتحمّل، دوس Ctrl+S أو ⌘S واحفظه باسم SKILL.md.</small>
+  </section>
+
+  <footer>شريف عبد المنعم · AI Integration Coach · #ai_with_sharief · المعلومات دي حسب صفحات المساعدة الرسمية في نوفمبر 2026، والقوايم بتتغير من وقت للتاني.</footer>
+</main>
+
+<script>
+(() => {
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  const ids = tabs.map(t => t.getAttribute('aria-controls'));
+  function show(id, focus) {
+    if (!ids.includes(id)) id = ids[0];
+    tabs.forEach(t => {
+      const on = t.getAttribute('aria-controls') === id;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).classList.toggle('on', on);
+      if (on && focus) t.focus();
+    });
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => { const id = t.getAttribute('aria-controls'); show(id); try { history.replaceState(null, '', '#' + id); } catch (e) {} });
+    t.addEventListener('keydown', e => {
+      // RTL: ArrowLeft moves to the next tab, ArrowRight to the previous one
+      let k = null;
+      if (e.key === 'ArrowLeft') k = (i + 1) % tabs.length;
+      if (e.key === 'ArrowRight') k = (i - 1 + tabs.length) % tabs.length;
+      if (k !== null) { e.preventDefault(); const id = tabs[k].getAttribute('aria-controls'); show(id, true); try { history.replaceState(null, '', '#' + id); } catch (e2) {} }
+    });
+  });
+  const fromHash = () => show(location.hash.slice(1));
+  window.addEventListener('hashchange', fromHash);
+  fromHash();
+})();
+</script>
+</body>
+</html>

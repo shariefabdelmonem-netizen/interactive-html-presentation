@@ -10,13 +10,13 @@ Built by **Sharief Abdelmonem · AI Integration Coach** (#ai_with_sharief).
 
 ## Install (30 seconds)
 
-**[⬇ Download the skill (ZIP)](https://github.com/shariefabdelmonem-netizen/interactive-html-presentation/raw/main/interactive-html-presentation.zip)**, then upload it to your AI. Don't unzip it.
+| AI | Download | Upload it from |
+|---|---|---|
+| **Claude** | [⬇ ZIP](https://github.com/shariefabdelmonem-netizen/interactive-html-presentation/raw/main/interactive-html-presentation.zip) | **Customize → Skills → + → Create skill → Upload a skill** |
+| **ChatGPT** | [⬇ ZIP](https://github.com/shariefabdelmonem-netizen/interactive-html-presentation/raw/main/interactive-html-presentation.zip) | **Skills → Create → Upload from your computer** |
+| **Gemini** | [⬇ SKILL.md](https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/SKILL.md) | **Settings → Skills → Create → Upload** (gemini.google.com) |
 
-| AI | Where to upload |
-|---|---|
-| **ChatGPT** | Profile icon → **Skills** → **New skill** → **Upload from your computer** |
-| **Gemini** | **Settings** → **Skills** → **Upload** (on gemini.google.com) |
-| **Claude** | **Settings** → **Capabilities** → **Skills** → **Upload skill** |
+Upload the ZIP as it is, don't unzip it. Step-by-step guide with fixes for common errors (Arabic): **[install.html](https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/install.html)**
 
 Then ask: *"Make an interactive presentation about …"*, or call it by name with `/interactive-html-presentation`.
 
@@ -68,6 +68,7 @@ interactive-html-presentation/
 ├── interactive-html-presentation.zip   # the same skill, ready to upload
 ├── README.md
 ├── index.html      # landing page for the live examples (GitHub Pages)
+├── install.html    # upload guide for Claude, ChatGPT and Gemini (Arabic)
 ├── assets/         # cover and preview images
 └── examples/
     ├── present-simple/index.html
