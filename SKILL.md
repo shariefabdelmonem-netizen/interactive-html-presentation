@@ -1,118 +1,90 @@
 ---
 name: interactive-html-presentation
-description: Build an animated, interactive HTML presentation for a training session or workshop from a topic and audience, with speaker notes, sourced data and presenter controls.
+description: Build an animated, interactive HTML presentation for a lesson, training session or workshop from a topic and audience. Use when the user asks for an interactive presentation, animated slides, an HTML deck or a workshop deck.
 ---
 
 # Interactive HTML Presentation
 
-Turn a topic and audience into a working, interactive HTML presentation a trainer can run live in a room. Every design and motion choice must help the audience understand, remember or act. If it does neither, leave it out.
+Turn a topic and audience into ONE working, interactive HTML presentation that a trainer can run live in a room. Every design and motion choice must help the audience understand, remember or act. If it does neither, leave it out.
 
-## 1. Gather inputs
+This skill works in Claude, ChatGPT, Gemini and other assistants. Where a step depends on a tool your environment may not have, it says "if available".
 
-Before building anything, always ask these four in one message (use AskUserQuestion with ready options where available), skipping only those the user has already answered. Then stop and wait.
+## Step 1: Ask first
 
-1. Visual identity: brand colors (hex), fonts, logo (attached file or none), and visual style (Minimal / Educational / Corporate / Cinematic / Creative). Offer "Choose for me" as an option.
-2. Target audience: role, sector, school type, grade level, country, and knowledge level (Beginner / Intermediate / Advanced).
-3. Session duration in minutes.
-4. Number of slides. Offer "Choose for me" (then use about one slide per 1.5–2 minutes).
+Before building anything, ask these in ONE message, skipping any the user has already answered. Use a multiple-choice question tool with ready options if available; otherwise a short numbered list. Then stop and wait.
 
-If the topic itself is missing, ask for it in the same message.
+1. Topic (if not given)
+2. Visual identity: brand colors (hex), fonts, logo, style (Minimal / Educational / Corporate / Cinematic / Creative), or "choose for me"
+3. Target audience: who they are, age or grade, country, knowledge level
+4. Session duration in minutes
+5. Number of slides, or "choose for me" (then use about one slide per 1.5–2 minutes)
+6. Only if unclear: language (English / Arabic / Bilingual), venue internet (reliable / weak / none), extras (speaker notes, facilitator guide, handout), outline first or not
 
-Ask in the same message only for these if they matter and aren't obvious:
-- Language: English / Arabic / Bilingual
-- Venue internet: reliable / weak / none
-- Deliverables beyond the HTML deck (see step 8)
-- Whether they want an outline first
+If slide count and duration clash badly (e.g. 40 slides in 10 minutes), say so and suggest a better number. For everything else, decide sensibly and list assumptions in 3–5 bullets before building. Default presenter credit: "Sharief Abdelmonem · AI Integration Coach" unless the user gives another name. If the user wants an outline first, send a slide-by-slide outline (title, key message, visual idea, interaction, minutes) and wait for approval.
 
-For everything else, decide sensibly and list assumptions at the top of the reply. Defaults:
-- Presenter credit: "Sharief Abdelmonem · AI Integration Coach" unless told otherwise
-- Objective: Train
-- Tone: warm and practical
-- Learning outcomes: write 2–3 measurable ones ("By the end, participants can …") and state them
-- Local context: use the audience's real setting (Qatar / Gulf schools when the audience is local educators)
+## Step 2: Plan the content
 
-If the user asked for an outline first, send a slide-by-slide outline (title, key message, visual idea, interaction, minutes) and wait for approval.
+- Write 2–3 measurable learning outcomes ("By the end, participants can …") and build every slide around them.
+- Use exactly the number of slides the user chose, interactive slides included.
+- Arc: hook that shows why it matters → core ideas → application in the audience's own context → a clear action to take next.
+- For each main idea where it fits: concept → local example → check for understanding → application.
+- One idea per slide, about 30 words of text maximum; detail goes in speaker notes.
+- An interaction at least every 3–4 slides: sentence builder, click-to-reveal or flip cards, sorting game, quick quiz, poll, live demo or timer.
+- Address the audience's misconceptions or objections on at least one slide.
+- Use examples from the audience's real setting (their country, school, subject, culture).
+- Close with the one sentence to remember plus 2–3 concrete next steps.
 
-## 2. Content & learning design
+## Step 3: Facts and data
 
-- Plan around the learning outcomes, not the topic in general.
-- Use exactly the number of slides the user chose (interactive slides included). If they chose "Choose for me", use about one slide per 1.5–2 minutes. If their slide count and duration clash badly (e.g. 40 slides in 10 minutes), say so and suggest a better number before building.
-- Arc: hook showing why it matters to this audience → core ideas → application in their context → commitment to act.
-- For each main idea, where it fits: concept → local example → check for understanding → application.
-- An interaction at least every 3–4 slides (poll, think-pair-share, live demo, flip cards, scenario sorting, quick quiz).
-- Address the audience's misconceptions or objections directly on at least one slide.
-- One idea per slide; body text about 30 words max; detail goes in speaker notes.
-- Close with the one sentence to remember plus 2–3 concrete actions for next week.
+- Never invent statistics, quotes, studies or references. If web search is available, use original sources (government, OECD, UNESCO, peer-reviewed). If you cannot verify a number, leave it out.
+- Short source line on every slide with a number; source list on the last slide.
+- If two sources disagree on the same figure, tell the user which ones, which you used and why.
+- Label any made-up teaching values "Illustrative".
+- Charts: bars start at zero, clear labels and units, and animation must not distort comparisons.
 
-## 3. Data & sources
+## Step 4: Design
 
-- Never invent statistics, quotes, studies or references.
-- Use the user's sources first. When searching, prefer original sources (government, OECD, UNESCO, peer-reviewed) over blogs and aggregators.
-- Short source line on every slide with a number; full source list on the last slide.
-- If sources give different figures for the same thing, tell the user which conflict, which you used and why.
-- Label any illustrative or simulated values "Illustrative" on the slide.
-- Charts: honest scales, bars from zero, clear labels and units; animation must not distort comparisons.
+- Apply the user's colors, fonts and logo exactly. If they chose "choose for me", pick a palette and fonts that suit the audience and say so in one line.
+- Define 4–6 color tokens in `:root` and give each color a fixed meaning (for example: blue = the verb, red = the ending we add).
+- Readable on a projector: body text at least 20px and titles at least 56px on a 1600×900 stage.
+- Vary layouts (big statement, split, grid, diagram, big number) with consistent margins.
+- No emoji icons, no clip-art, no purple-blue gradient hero, not everything centered. Draw simple SVG icons yourself.
+- Logo (if given): on the title and closing slides, embedded as a data URI or inline SVG.
+- Arabic: full RTL layout, mirrored arrows and progress, Cairo or IBM Plex Sans Arabic, no letter-spacing on Arabic text.
 
-## 4. Visual design
+## Step 5: Motion
 
-- Apply the user's visual identity exactly: their hex colors, fonts and logo come first. If they chose "Choose for me", pick a palette and fonts that suit the topic and audience, and say so in one line.
-- Write a design system as `:root` tokens first: 4–6 colors, one display font, one body font, a fixed type scale. Place the logo on the title and closing slides, and small on content slides only if the user wants it.
-- Give color a consistent meaning (e.g. human / tool / caution).
-- At the 1600×900 stage: body text ≥ 20px, slide titles ≥ 56px. Must read from the back of a room on a projector.
-- Vary layouts (statement, split, grid, diagram, big number) with consistent edges and margins.
-- Avoid generic looks: purple-blue gradients, emoji icons, clip-art, everything centered. Use simple custom SVG icons and diagrams.
-- Arabic: full RTL layout, mirrored arrows and progress, Cairo or IBM Plex Sans Arabic, no letter-spacing on Arabic text; confirm numeral style.
+- Motion must explain: build a diagram step by step, count up a number, reveal a comparison.
+- At most 3 slide-transition types in the deck (continue = fade, new section = slide, detail = zoom), at most 2 entrance styles per slide, transitions under 1 second.
+- Points the presenter talks through appear one per click.
+- Respect `prefers-reduced-motion`: show everything without movement.
 
-## 5. Motion rules
+## Step 6: Build
 
-- Motion explains: build a diagram step by step, draw a connection, count up a number, reveal a comparison.
-- Max 3 transition types in the deck, chosen by slide relationship (continue = fade, new section = slide, detail = zoom).
-- Max 2 entrance styles per slide. Transitions under 1s; entrances done within 2s.
-- Content the presenter talks through point by point reveals one step per click.
-- Respect prefers-reduced-motion: everything visible, no movement.
+ONE complete, self-contained `index.html` (inline CSS and JavaScript):
 
-## 6. Presenter controls & interaction
+- A 16:9 stage of 1600×900 px, centered and scaled to fit any screen with `transform: scale()`, no overflow.
+- GSAP 3.12.5 from cdnjs for animation; Chart.js 4.4.1 from cdnjs only if there is a chart. If the venue internet is weak and you can run code, download these libraries and inline them so the file works offline; otherwise tell the user the file needs internet for animations.
+- Controls: → / Space / PageDown = next (reveals the next step first), ← / PageUp = previous (shows that slide fully revealed), O = slide list, F = full screen, R = replay slide, S = speaker notes (if requested), on-screen buttons, progress bar, slide number, touch swipe.
+- Interactive elements work with mouse, keyboard and touch, and reset when the slide is opened again.
+- Only the active slide animates; stop loops and destroy charts when leaving a slide.
+- Visible keyboard focus, WCAG AA contrast, aria labels on charts and buttons.
 
-- Next/previous: arrow keys, Space, PageUp/PageDown (clicker), on-screen buttons; touch swipe.
-- Step reveals use the same "next" key; going back shows the previous slide fully revealed.
-- O = slide list, F = full screen, R = replay slide, S = speaker view (notes, timer, next slide) when notes exist.
-- Progress bar and slide number.
-- Interactive elements work with mouse, touch and keyboard, and reset when the slide is re-entered.
+Write ALL the code. Never stop at an outline unless the user asked for one.
 
-## 7. Technical build
+## Step 7: Check
 
-- One self-contained HTML file, inline CSS/JS, 16:9 stage at 1600×900 scaled to fit (absolute center + transform scale), no overflow.
-- GSAP for timelines, Chart.js for charts only when needed; CSS/SVG for the rest. Pin exact versions (e.g. gsap 3.12.5, Chart.js 4.4.1).
-- Venue internet weak or none: `npm install` the libraries in the workspace and inline them (and fonts as data URIs) so the file runs fully offline. Reliable internet: load from cdnjs and list dependencies.
-- Embed an attached logo as a data URI (or inline SVG).
-- Only the active slide animates; kill loops and destroy charts on leave. Set Chart.js devicePixelRatio to account for the stage scale.
-- WCAG AA contrast, visible focus, aria labels on charts and controls.
-- Print stylesheet: one slide per page, all steps revealed.
+If you can run code (code interpreter, sandbox, headless browser), open the file, step through every slide, and fix errors, text overflow and broken interactions before delivering. If you can't, re-read the code once for these problems. Confirm the slide count and total timing match what the user asked for.
 
-## 8. Optional deliverables
+## Step 8: Deliver
 
-- Speaker notes with timing per slide (inside the deck's speaker view, and listed in the reply).
-- Facilitator guide: activity instructions, materials, expected answers — as a doc.
-- One-page participant handout — as a doc.
+1. Assumptions (short list) and any source conflicts
+2. The presentation: publish it as a page or artifact if your app supports that; otherwise give the complete `index.html` in one code block, and open it in canvas or preview mode if available
+3. How to present: save as `index.html`, open in Chrome or Edge, and the keys above
+4. Extras if requested (speaker notes, facilitator guide, handout)
+5. Sources used
 
-## 9. Test before delivery
-
-In the workspace, open the file in headless Chrome with Playwright. The CDN is usually blocked there, so route the library URLs to locally npm-installed copies. Then:
-- Step through every slide with the keyboard and capture console/page errors.
-- Take one montage screenshot of key slides (charts, diagrams, interactive slides) and fix what it shows.
-- Check text overflow, that interactions work and reset, that the slide count matches what the user chose, and that timing adds up to the duration.
-Note anything you could not test (e.g. full screen, live CDN loading).
-
-## 10. Deliver
-
-Publish the HTML as an artifact (hand-built page). Then reply with:
-1. Assumptions made (short)
-2. Source conflicts or gaps
-3. How to present (keys, interactive slides)
-4. Internet dependencies, if any
-5. Sources list
-
-## Standard to aim for
+## Quality bar
 
 Weak slide: "Benefits of AI in Education" with six bullets and a robot stock image.
-Strong slide: "36% of teachers already use AI" as one large number counting up, a three-bar chart comparing countries, a one-line source, and a speaker note asking the room "Are you in the 36%?"
+Strong slide: "36% of teachers already use AI" as one large number counting up, a three-bar chart comparing countries, a one-line source, and a question to the room.
