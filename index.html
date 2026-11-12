@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interactive HTML Presentation · Live Examples</title>
+<meta name="description" content="A Claude skill that builds animated, interactive HTML presentations for workshops and classrooms. Live example decks.">
+<meta property="og:image" content="assets/cover.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: cover image, then one card per live deck */
+  --bg:#f4f7ff;
+  --card:#ffffff;
+  --ink:#141a33;
+  --muted:#5a6384;
+  --line:#dde4f5;
+  --blue:#1f5ae6;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Instrument Sans","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.5}
+main{max-width:1120px;margin:0 auto;padding:40px 20px 70px;display:flex;flex-direction:column;gap:40px}
+.cover{width:100%;border-radius:20px;display:block;border:1px solid var(--line)}
+h1{font:800 clamp(34px,5vw,54px)/1.05 var(--display);margin:0 0 12px;text-wrap:balance}
+.intro p{font-size:19px;color:var(--muted);max-width:68ch;margin:0}
+.intro .links{margin-top:20px;display:flex;flex-wrap:wrap;gap:12px}
+a.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:12px;font-weight:600;text-decoration:none;background:var(--blue);color:#fff}
+a.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+a:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+h2{font:700 28px var(--display);margin:0 0 16px}
+.decks{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px}
+.deck{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.deck img{width:100%;display:block;border-bottom:1px solid var(--line)}
+.deck .body{padding:20px 22px 22px;display:flex;flex-direction:column;gap:10px;flex:1}
+.deck h3{font:700 23px var(--display);margin:0}
+.deck .meta{display:flex;flex-wrap:wrap;gap:8px}
+.deck .meta span{font-size:13px;font-weight:600;background:#eef2ff;color:var(--blue);border-radius:999px;padding:4px 10px}
+.deck p{margin:0;color:var(--muted)}
+.deck a.btn{align-self:flex-start;margin-top:auto}
+.keys{font-size:15px;color:var(--muted)}
+kbd{font:600 12px var(--body);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;background:var(--card);color:var(--ink)}
+footer{font-size:15px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+  <img class="cover" src="assets/cover.jpg" alt="Create HTML presentations easily, with Sharief Abdelmonem">
+  <section class="intro">
+    <h1>Interactive HTML Presentation</h1>
+    <p>A Claude skill that turns a topic and an audience into an animated, interactive presentation you can run live in a workshop or classroom. Open an example below and present it straight from your browser.</p>
+    <div class="links">
+      <a class="btn" href="https://github.com/shariefabdelmonem-netizen/interactive-html-presentation">Get the skill on GitHub</a>
+      <a class="btn ghost" href="https://github.com/shariefabdelmonem-netizen/interactive-html-presentation/blob/main/SKILL.md">Read SKILL.md</a>
+    </div>
+  </section>
+  <section>
+    <h2>Live examples</h2>
+    <div class="decks">
+      <article class="deck">
+        <img src="assets/preview-present-simple.jpg" alt="Four slides from the Present Simple deck: title, sentence builder, spelling game and quiz">
+        <div class="body">
+          <h3>Present Simple: Every Day!</h3>
+          <div class="meta"><span>Grade 4–6 · A1</span><span>8 slides</span><span>15 min</span></div>
+          <p>Sentence builders, a spelling sort game, a quiz with stars and a pair-talk timer.</p>
+          <a class="btn" href="examples/present-simple/">Open the deck</a>
+        </div>
+      </article>
+      <article class="deck">
+        <img src="assets/preview-ai-literacy-for-teachers.jpg" alt="Four slides from the AI literacy deck: title, adoption chart, word prediction demo and teacher-in-the-loop cycle">
+        <div class="body">
+          <h3>AI Literacy for Teachers</h3>
+          <div class="meta"><span>Teacher training</span><span>12 slides</span><span>20 min</span></div>
+          <p>Sourced TALIS 2024 data, a live word-prediction demo, flip cards and the UNESCO framework.</p>
+          <a class="btn" href="examples/ai-literacy-for-teachers/">Open the deck</a>
+        </div>
+      </article>
+    </div>
+    <p class="keys" style="margin-top:18px">In a deck: <kbd>→</kbd> / <kbd>Space</kbd> next · <kbd>←</kbd> back · <kbd>O</kbd> slide list · <kbd>F</kbd> full screen · <kbd>R</kbd> replay</p>
+  </section>
+  <footer>Built by Sharief Abdelmonem · AI Integration Coach · #ai_with_sharief</footer>
+</main>
+</body>
+</html>

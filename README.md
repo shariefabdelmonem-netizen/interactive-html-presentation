@@ -1,5 +1,9 @@
 # Interactive HTML Presentation
 
+![Create HTML presentations easily](assets/cover.jpg)
+
+**▶ Live examples:** https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/
+
 A Claude skill that turns a topic and an audience into an animated, interactive HTML presentation you can run live in a workshop or classroom.
 
 Built by **Sharief Abdelmonem · AI Integration Coach** (#ai_with_sharief).
@@ -34,12 +38,23 @@ Claude will ask for anything missing, then build, test and deliver the deck.
 
 ## Examples
 
-Open these files in a browser (an internet connection is needed for animations and fonts):
+Both decks run live in your browser. Click a preview to open it.
 
-| Example | Audience | Length |
-|---|---|---|
-| [`examples/present-simple`](examples/present-simple/index.html) | Grade 4–6, A1 | 8 slides, 15 min |
-| [`examples/ai-literacy-for-teachers`](examples/ai-literacy-for-teachers/index.html) | Teachers in Qatar | 12 slides, 20 min |
+### Present Simple: Every Day!
+Grade 4–6 · A1 · 8 slides · 15 minutes
+
+[![Present Simple deck preview](assets/preview-present-simple.jpg)](https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/examples/present-simple/)
+
+**[▶ Open the live deck](https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/examples/present-simple/)**
+
+### AI Literacy for Teachers
+Teacher training · 12 slides · 20 minutes
+
+[![AI Literacy for Teachers deck preview](assets/preview-ai-literacy-for-teachers.jpg)](https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/examples/ai-literacy-for-teachers/)
+
+**[▶ Open the live deck](https://shariefabdelmonem-netizen.github.io/interactive-html-presentation/examples/ai-literacy-for-teachers/)**
+
+Keys inside a deck: `→` / `Space` next · `←` back · `O` slide list · `F` full screen · `R` replay
 
 ## Folder structure
 
@@ -47,6 +62,8 @@ Open these files in a browser (an internet connection is needed for animations a
 interactive-html-presentation/
 ├── SKILL.md        # the skill instructions Claude follows
 ├── README.md
+├── index.html      # landing page for the live examples (GitHub Pages)
+├── assets/         # cover and preview images
 └── examples/
     ├── present-simple/index.html
     └── ai-literacy-for-teachers/index.html
