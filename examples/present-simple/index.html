@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Present Simple: Every Day!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: fixed 1600x900 stage scaled to fit. Colour carries grammar meaning:
+     blue = the verb, coral = the ending we add (s / es / ies), yellow = time words, teal = correct */
+  --bg:#f3f6ff;
+  --card:#ffffff;
+  --ink:#1d2340;
+  --muted:#5b6386;
+  --line:#dbe2f5;
+  --blue:#3d6bff;
+  --coral:#ff5f6d;
+  --sun:#ffc23d;
+  --teal:#12b39b;
+  --display:"Fredoka","Trebuchet MS","Segoe UI",system-ui,sans-serif;
+  --body:"Nunito","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:#dfe6fb;color:var(--ink);font-family:var(--body);overflow:hidden}
+button{font:inherit;color:inherit}
+:focus-visible{outline:4px solid var(--blue);outline-offset:3px}
+
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%);overflow:hidden;background:var(--bg);box-shadow:0 30px 80px rgba(29,35,64,.25)}
+.bg{position:absolute;top:0;bottom:0;left:-5%;width:150%;pointer-events:none;
+  background:
+   radial-gradient(circle at 8% 14%, rgba(255,194,61,.35) 0 90px, transparent 91px),
+   radial-gradient(circle at 92% 88%, rgba(61,107,255,.14) 0 160px, transparent 161px),
+   radial-gradient(circle at 40% 105%, rgba(18,179,155,.14) 0 120px, transparent 121px),
+   radial-gradient(circle at 70% 4%, rgba(255,95,109,.12) 0 70px, transparent 71px),
+   radial-gradient(rgba(29,35,64,.07) 2px, transparent 2.5px) 0 0/44px 44px;}
+
+.slide{position:absolute;inset:0;padding:70px 100px 110px;display:none;flex-direction:column}
+.slide.active{display:flex}
+.eyebrow{display:inline-block;align-self:flex-start;font:800 18px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--blue);background:#e3eaff;border-radius:999px;padding:10px 18px;margin:0 0 18px}
+h1{font:700 118px/1 var(--display);margin:0;letter-spacing:-.01em;text-wrap:balance}
+h2{font:700 64px/1.08 var(--display);margin:0 0 30px;text-wrap:balance}
+p{margin:0}
+.lead{font-size:32px;line-height:1.4;color:var(--muted);font-weight:600}
+.v{color:var(--blue)} .s{color:var(--coral)} .t{color:#c98a00} .ok{color:var(--teal)}
+em{font-style:normal}
+.num{position:absolute;right:100px;bottom:50px;font:800 18px var(--body);color:var(--muted);letter-spacing:.12em}
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.12em;margin-bottom:-.12em}
+.w>span{display:inline-block}
+.tip{font-size:22px;color:var(--muted);font-weight:600}
+.panel{background:var(--card);border-radius:28px;box-shadow:0 6px 0 var(--line), 0 18px 40px rgba(29,35,64,.08);border:2px solid var(--line)}
+.chip{background:var(--card);border:3px solid var(--line);border-radius:999px;padding:12px 26px;font:700 28px var(--display);cursor:pointer;box-shadow:0 4px 0 var(--line);transition:transform .12s,border-color .2s,background .2s}
+.chip:hover{transform:translateY(-2px)}
+.chip:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+.chip[aria-pressed="true"]{border-color:var(--blue);background:#e3eaff;color:var(--blue)}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:18px;padding:16px 28px;font:700 26px var(--display);cursor:pointer;box-shadow:0 5px 0 #2747c4}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #2747c4}
+.btn.ghost{background:var(--card);color:var(--ink);box-shadow:0 5px 0 var(--line);border:2px solid var(--line)}
+
+/* 1 title */
+.title-row{flex:1;display:grid;grid-template-columns:1fr 520px;align-items:center;gap:40px}
+.title-row .lead{margin-top:30px;max-width:760px}
+.question{margin-top:44px;display:inline-flex;align-items:center;gap:18px;font:600 32px var(--display);background:var(--sun);border-radius:22px;padding:18px 28px;box-shadow:0 6px 0 #e0a51f}
+.byline{position:absolute;left:100px;bottom:48px;font-size:18px;color:var(--muted);font-weight:600}
+.sunwrap svg{width:520px;height:520px;overflow:visible}
+
+/* 2 when */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:16px;margin-top:6px}
+.day{padding:20px 10px 18px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.day b{font:700 26px var(--display)}
+.day svg{width:84px;height:84px}
+.day.wk{background:#fff7e3;border-color:#ffe2a3}
+.uses{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:30px}
+.use{padding:26px 32px;display:flex;align-items:center;gap:24px}
+.use .k{font:800 17px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.use p{font:600 34px/1.25 var(--display);margin-top:6px}
+.use svg{flex:none;width:76px;height:76px}
+
+/* 3 & 4 builder */
+.builder{flex:1;display:flex;flex-direction:column;gap:30px}
+.row{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.row .lab{font:800 18px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);width:150px}
+.big-sentence{padding:44px 50px;font:700 84px/1.15 var(--display);min-height:200px;display:flex;align-items:center;flex-wrap:wrap;gap:0 26px}
+.big-sentence .subj{color:var(--ink)}
+.big-sentence .verb{color:var(--blue);display:inline-flex}
+.big-sentence .suf{color:var(--coral);display:inline-block}
+.big-sentence .time{color:#c98a00}
+.rule{display:flex;align-items:center;gap:22px;padding:20px 30px;font:600 32px var(--display);align-self:flex-start}
+.rule .pill{font:800 18px var(--body);letter-spacing:.12em;text-transform:uppercase;background:var(--coral);color:#fff;border-radius:999px;padding:8px 16px}
+.rule.same .pill{background:var(--blue)}
+
+/* 5 sort */
+.pool{display:flex;flex-wrap:wrap;gap:16px;min-height:72px}
+.word{background:var(--card);border:3px solid var(--blue);color:var(--blue);border-radius:16px;padding:10px 24px;font:700 32px var(--display);cursor:pointer;box-shadow:0 4px 0 #b9c9ff}
+.word:hover{transform:translateY(-2px)}
+.buckets{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:28px;flex:1}
+.bucket{padding:24px 26px;display:flex;flex-direction:column;gap:12px}
+.bucket h3{margin:0;font:700 46px var(--display);color:var(--coral)}
+.bucket .when{font-size:21px;color:var(--muted);font-weight:700;line-height:1.35;min-height:58px}
+.bucket .got{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+.done{font:700 30px var(--display);background:#f6f8ff;border-radius:14px;padding:8px 18px;color:var(--blue)}
+.done .suf{color:var(--coral)}
+.sort-foot{display:flex;align-items:center;gap:20px;margin-top:18px}
+
+/* 6 frequency */
+.freq{display:grid;grid-template-columns:1fr 600px;gap:44px;flex:1}
+.fq{padding:16px 30px}
+.fq-row{display:grid;grid-template-columns:200px 1fr;align-items:center;gap:20px;padding:13px 0;border-bottom:2px dashed var(--line)}
+.fq-row:last-child{border-bottom:0}
+.fq-row b{font:700 36px var(--display);color:#c98a00}
+.dots{display:flex;gap:12px}
+.dot{width:46px;height:46px;border-radius:50%;background:#eef1fa;border:3px solid var(--line)}
+.dot.on{background:var(--sun);border-color:#e0a51f}
+.fq-cap{font-size:18px;color:var(--muted);font-weight:700;margin-top:8px}
+.pos{display:flex;flex-direction:column;gap:22px;justify-content:center}
+.pos .ex{padding:28px 32px;font:700 44px/1.25 var(--display)}
+.pos .ex small{display:block;font:700 20px var(--body);color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+
+/* 7 quiz */
+.quiz{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:4px}
+.q{padding:26px 30px;display:flex;flex-direction:column;gap:18px}
+.q .stem{font:600 34px/1.3 var(--display)}
+.q .gap{display:inline-block;min-width:130px;border-bottom:4px solid var(--line);text-align:center;color:var(--blue)}
+.q .opts{display:flex;gap:14px}
+.q .opt{flex:1;padding:12px;font:700 30px var(--display);border-radius:16px;border:3px solid var(--line);background:#f8faff;cursor:pointer;box-shadow:0 4px 0 var(--line)}
+.q .opt.right{background:var(--teal);border-color:var(--teal);color:#fff;box-shadow:0 4px 0 #0b8574}
+.q .opt.wrong{background:#ffe6e8;border-color:var(--coral);color:var(--coral)}
+.q .fb{font-size:21px;font-weight:700;min-height:28px;color:var(--muted)}
+.q.solved{border-color:var(--teal)}
+.score{display:flex;align-items:center;gap:16px;margin-top:22px;font:700 28px var(--display)}
+.stars{display:flex;gap:8px}
+.stars svg{width:40px;height:40px}
+
+/* 8 close */
+.close{display:grid;grid-template-columns:1fr 470px;gap:50px;flex:1;align-items:center}
+.close h1{font-size:96px}
+.recap{margin-top:34px;padding:26px 34px;display:grid;grid-template-columns:auto 1fr;gap:12px 30px;font:700 38px var(--display);align-items:center;max-width:820px}
+.recap .p{color:var(--muted);font-size:30px}
+.timer{display:flex;flex-direction:column;align-items:center;gap:20px;padding:30px}
+.timer svg{width:300px;height:300px}
+.timer .tt{font:700 76px var(--display);fill:var(--ink)}
+.timer p{font:600 28px/1.3 var(--display);text-align:center}
+.timer .acts{display:flex;gap:14px}
+
+/* chrome */
+#progress{position:absolute;left:0;bottom:0;height:8px;width:0;background:linear-gradient(90deg,var(--blue),var(--teal),var(--sun));z-index:5;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+#controls{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.95);border:2px solid var(--line);border-radius:16px;padding:6px;z-index:20;opacity:.45;transition:opacity .3s;box-shadow:0 8px 24px rgba(29,35,64,.12)}
+#controls:hover,#controls:focus-within,body.awake #controls{opacity:1}
+#controls button{background:none;border:0;border-radius:10px;padding:9px 13px;font:700 15px var(--body);cursor:pointer;color:var(--ink)}
+#controls button:hover{background:#eef2ff}
+#controls .sep{width:2px;height:24px;background:var(--line);margin:0 4px}
+#count{font:700 15px var(--body);color:var(--muted);min-width:56px;text-align:center;font-variant-numeric:tabular-nums}
+#overview{position:fixed;inset:0;background:rgba(243,246,255,.97);z-index:30;display:none;padding:60px 70px;overflow:auto}
+#overview.open{display:block}
+#overview h2{font-size:40px;margin-bottom:24px}
+#ovgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+#ovgrid button{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:20px;text-align:left;cursor:pointer;min-height:110px;display:flex;flex-direction:column;gap:8px;box-shadow:0 4px 0 var(--line)}
+#ovgrid button.cur{border-color:var(--blue)}
+#ovgrid .on{font:800 14px var(--body);letter-spacing:.14em;color:var(--blue)}
+#ovgrid .ot{font:700 22px/1.25 var(--display)}
+#ovclose{position:absolute;top:44px;right:60px}
+
+@media (prefers-reduced-motion: reduce){ #progress{transition:none} .chip,.word{transition:none} }
+</style>
+</head>
+<body>
+<div id="stage" role="region" aria-roledescription="presentation" aria-label="Present Simple lesson">
+  <div class="bg" aria-hidden="true"></div>
+
+  <!-- 1 -->
+  <section class="slide active" data-title="Every day!" data-transition="fade" aria-label="Slide 1">
+    <div class="title-row">
+      <div>
+        <span class="eyebrow" data-anim="fade">English grammar · Present Simple</span>
+        <h1 data-anim="words">Every <em class="t">day!</em></h1>
+        <p class="lead" data-anim="up">We use the Present Simple to talk about things we do again and again.</p>
+        <div class="question" data-step="1">
+          <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><path d="M6 8h32v22H18l-8 7v-7H6z" fill="#fff" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/><circle cx="16" cy="19" r="2.5" fill="var(--ink)"/><circle cx="22" cy="19" r="2.5" fill="var(--ink)"/><circle cx="28" cy="19" r="2.5" fill="var(--ink)"/></svg>
+          What do you do every morning?
+        </div>
+      </div>
+      <div class="sunwrap" data-anim="pop" aria-hidden="true">
+        <svg viewBox="0 0 520 520">
+          <g id="rays" transform="translate(260 260)">
+            <g stroke="var(--sun)" stroke-width="18" stroke-linecap="round">
+              <line x1="0" y1="-160" x2="0" y2="-215"/><line x1="0" y1="160" x2="0" y2="215"/>
+              <line x1="-160" y1="0" x2="-215" y2="0"/><line x1="160" y1="0" x2="215" y2="0"/>
+              <line x1="113" y1="-113" x2="152" y2="-152"/><line x1="-113" y1="113" x2="-152" y2="152"/>
+              <line x1="113" y1="113" x2="152" y2="152"/><line x1="-113" y1="-113" x2="-152" y2="-152"/>
+            </g>
+          </g>
+          <circle cx="260" cy="260" r="130" fill="var(--sun)" stroke="#e0a51f" stroke-width="6"/>
+          <circle cx="215" cy="240" r="13" fill="var(--ink)"/><circle cx="305" cy="240" r="13" fill="var(--ink)"/>
+          <path d="M205 290 q55 50 110 0" fill="none" stroke="var(--ink)" stroke-width="12" stroke-linecap="round"/>
+          <circle cx="185" cy="285" r="16" fill="var(--coral)" opacity=".45"/><circle cx="335" cy="285" r="16" fill="var(--coral)" opacity=".45"/>
+        </svg>
+      </div>
+    </div>
+    <p class="byline">Sharief Abdelmonem · AI Integration Coach</p>
+  </section>
+
+  <!-- 2 -->
+  <section class="slide" data-title="When do we use it?" data-transition="slide" aria-label="Slide 2">
+    <span class="eyebrow" data-anim="fade">When do we use it?</span>
+    <h2 data-anim="words">Things that happen <em class="t">again and again</em></h2>
+    <div class="week">
+      <div class="panel day" data-anim="pop"><b>Sun</b><svg viewBox="0 0 84 84" aria-hidden="true"><rect x="16" y="22" width="52" height="50" rx="10" fill="var(--blue)"/><path d="M30 22v-6a12 12 0 0 1 24 0v6" fill="none" stroke="var(--ink)" stroke-width="5"/><rect x="28" y="40" width="28" height="14" rx="4" fill="#fff"/></svg><span class="tip">school</span></div>
+      <div class="panel day" data-anim="pop"><b>Mon</b><svg viewBox="0 0 84 84" aria-hidden="true"><rect x="16" y="22" width="52" height="50" rx="10" fill="var(--blue)"/><path d="M30 22v-6a12 12 0 0 1 24 0v6" fill="none" stroke="var(--ink)" stroke-width="5"/><rect x="28" y="40" width="28" height="14" rx="4" fill="#fff"/></svg><span class="tip">school</span></div>
+      <div class="panel day" data-anim="pop"><b>Tue</b><svg viewBox="0 0 84 84" aria-hidden="true"><rect x="16" y="22" width="52" height="50" rx="10" fill="var(--blue)"/><path d="M30 22v-6a12 12 0 0 1 24 0v6" fill="none" stroke="var(--ink)" stroke-width="5"/><rect x="28" y="40" width="28" height="14" rx="4" fill="#fff"/></svg><span class="tip">school</span></div>
+      <div class="panel day" data-anim="pop"><b>Wed</b><svg viewBox="0 0 84 84" aria-hidden="true"><rect x="16" y="22" width="52" height="50" rx="10" fill="var(--blue)"/><path d="M30 22v-6a12 12 0 0 1 24 0v6" fill="none" stroke="var(--ink)" stroke-width="5"/><rect x="28" y="40" width="28" height="14" rx="4" fill="#fff"/></svg><span class="tip">school</span></div>
+      <div class="panel day" data-anim="pop"><b>Thu</b><svg viewBox="0 0 84 84" aria-hidden="true"><rect x="16" y="22" width="52" height="50" rx="10" fill="var(--blue)"/><path d="M30 22v-6a12 12 0 0 1 24 0v6" fill="none" stroke="var(--ink)" stroke-width="5"/><rect x="28" y="40" width="28" height="14" rx="4" fill="#fff"/></svg><span class="tip">school</span></div>
+      <div class="panel day wk" data-anim="pop"><b>Fri</b><svg viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="44" r="28" fill="#fff" stroke="var(--ink)" stroke-width="4"/><path d="M42 31l11 8-4 13H35l-4-13z" fill="var(--ink)"/></svg><span class="tip">football</span></div>
+      <div class="panel day wk" data-anim="pop"><b>Sat</b><svg viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="44" r="28" fill="#fff" stroke="var(--ink)" stroke-width="4"/><path d="M42 31l11 8-4 13H35l-4-13z" fill="var(--ink)"/></svg><span class="tip">football</span></div>
+    </div>
+    <div class="uses">
+      <div class="panel use" data-step="1">
+        <svg viewBox="0 0 76 76" aria-hidden="true"><circle cx="38" cy="38" r="32" fill="#e3eaff"/><path d="M38 20v19l12 8" fill="none" stroke="var(--blue)" stroke-width="6" stroke-linecap="round"/></svg>
+        <div><span class="k">Routines</span><p>I <span class="v">go</span> to school from Sunday to Thursday.</p></div>
+      </div>
+      <div class="panel use" data-step="2">
+        <svg viewBox="0 0 76 76" aria-hidden="true"><circle cx="38" cy="38" r="32" fill="#fff4d6"/><circle cx="38" cy="38" r="14" fill="var(--sun)"/></svg>
+        <div><span class="k">Facts</span><p>The sun <span class="v">rise</span><span class="s">s</span> in the east.</p></div>
+      </div>
+    </div>
+    <span class="num">02</span>
+  </section>
+
+  <!-- 3 -->
+  <section class="slide" data-id="b1" data-title="I, you, we, they" data-transition="fade" aria-label="Slide 3">
+    <span class="eyebrow" data-anim="fade">Build a sentence</span>
+    <h2 data-anim="words">I, you, we, they: <em class="v">no change</em></h2>
+    <div class="builder" id="builder1">
+      <div class="row" data-anim="up"><span class="lab">Who?</span><div class="row subjects"></div></div>
+      <div class="row" data-anim="up"><span class="lab">Action</span><div class="row actions"></div></div>
+      <div class="panel big-sentence" data-anim="up" aria-live="polite"></div>
+      <div class="panel rule same" data-step="1"><span class="pill">Rule</span><span>The verb stays the same: <span class="v">play</span>, <span class="v">eat</span>, <span class="v">read</span></span></div>
+    </div>
+    <span class="num">03</span>
+  </section>
+
+  <!-- 4 -->
+  <section class="slide" data-id="b2" data-title="He, she, it: add s" data-transition="zoom" aria-label="Slide 4">
+    <span class="eyebrow" data-anim="fade">The important one</span>
+    <h2 data-anim="words">He, she, it: <em class="s">add s!</em></h2>
+    <div class="builder" id="builder2">
+      <div class="row" data-anim="up"><span class="lab">Who?</span><div class="row subjects"></div></div>
+      <div class="row" data-anim="up"><span class="lab">Action</span><div class="row actions"></div></div>
+      <div class="panel big-sentence" data-anim="up" aria-live="polite"></div>
+      <div class="panel rule" data-step="1"><span class="pill">Rule</span><span>He / she / it / Ahmed / my cat → verb + <span class="s">s</span></span></div>
+    </div>
+    <span class="num">04</span>
+  </section>
+
+  <!-- 5 -->
+  <section class="slide" data-id="sort" data-title="s, es or ies?" data-transition="slide" aria-label="Slide 5">
+    <span class="eyebrow" data-anim="fade">Spelling game</span>
+    <h2 data-anim="words" style="margin-bottom:20px">s, es or ies?</h2>
+    <p class="tip" data-anim="fade" style="margin-bottom:16px">Say the answer first. Then click the word to check.</p>
+    <div class="pool" id="pool" data-anim="up"></div>
+    <div class="buckets">
+      <div class="panel bucket" data-anim="up"><h3>+ s</h3><p class="when">Most verbs</p><div class="got" data-b="s"></div></div>
+      <div class="panel bucket" data-anim="up"><h3>+ es</h3><p class="when">After ch, sh, s, x, o</p><div class="got" data-b="es"></div></div>
+      <div class="panel bucket" data-anim="up"><h3>y → ies</h3><p class="when">Consonant + y</p><div class="got" data-b="ies"></div></div>
+    </div>
+    <div class="sort-foot"><button class="btn ghost" id="sortReset" type="button">Start again</button><span class="tip" id="sortMsg"></span></div>
+    <span class="num">05</span>
+  </section>
+
+  <!-- 6 -->
+  <section class="slide" data-title="How often?" data-transition="fade" aria-label="Slide 6">
+    <span class="eyebrow" data-anim="fade">How often?</span>
+    <h2 data-anim="words">Time words</h2>
+    <div class="freq">
+      <div class="panel fq" data-anim="up">
+        <div class="fq-row"><b>always</b><div class="dots" data-on="7"></div></div>
+        <div class="fq-row"><b>usually</b><div class="dots" data-on="5"></div></div>
+        <div class="fq-row"><b>often</b><div class="dots" data-on="4"></div></div>
+        <div class="fq-row"><b>sometimes</b><div class="dots" data-on="2"></div></div>
+        <div class="fq-row"><b>never</b><div class="dots" data-on="0"></div></div>
+        <p class="fq-cap">Example week: each dot is one day</p>
+      </div>
+      <div class="pos">
+        <div class="panel ex" data-step="1"><small>Before the verb</small>I <span class="t">always</span> <span class="v">eat</span> breakfast.</div>
+        <div class="panel ex" data-step="2"><small>At the end</small>We <span class="v">play</span> football <span class="t">every Friday</span>.</div>
+      </div>
+    </div>
+    <span class="num">06</span>
+  </section>
+
+  <!-- 7 -->
+  <section class="slide" data-id="quiz" data-title="Quick quiz" data-transition="zoom" aria-label="Slide 7">
+    <span class="eyebrow" data-anim="fade">Your turn</span>
+    <h2 data-anim="words" style="margin-bottom:24px">Choose the right verb</h2>
+    <div class="quiz" id="quiz"></div>
+    <div class="score" data-anim="fade"><span id="scoreTxt">0 / 4</span><div class="stars" id="stars"></div></div>
+    <span class="num">07</span>
+  </section>
+
+  <!-- 8 -->
+  <section class="slide" data-id="close" data-title="Talk to your partner" data-transition="fade" aria-label="Slide 8">
+    <div class="close">
+      <div>
+        <span class="eyebrow" data-anim="fade">Remember</span>
+        <h1 data-anim="words">He, she, it: <em class="s">add s!</em></h1>
+        <div class="panel recap" data-anim="up">
+          <span class="p">I / you / we / they</span><span><span class="v">play</span></span>
+          <span class="p">he / she / it</span><span><span class="v">play</span><span class="s">s</span> · <span class="v">watch</span><span class="s">es</span> · <span class="v">stud</span><span class="s">ies</span></span>
+        </div>
+      </div>
+      <div class="panel timer" data-anim="pop">
+        <p>Tell your partner <b>3 things</b> you do every day.</p>
+        <svg viewBox="0 0 300 300" aria-hidden="true">
+          <circle cx="150" cy="150" r="125" fill="none" stroke="#eef1fa" stroke-width="26"/>
+          <circle id="tRing" cx="150" cy="150" r="125" fill="none" stroke="var(--teal)" stroke-width="26" stroke-linecap="round" transform="rotate(-90 150 150)" stroke-dasharray="785.4" stroke-dashoffset="0"/>
+          <text id="tText" x="150" y="175" text-anchor="middle" class="tt">1:00</text>
+        </svg>
+        <div class="acts"><button class="btn" id="tStart" type="button">Start</button><button class="btn ghost" id="tReset" type="button">Reset</button></div>
+      </div>
+    </div>
+    <span class="num">08</span>
+  </section>
+
+  <div id="progress" aria-hidden="true"></div>
+</div>
+
+<nav id="controls" aria-label="Presentation controls">
+  <button id="bPrev" type="button" aria-label="Previous slide">← Prev</button>
+  <span id="count" aria-live="polite">1 / 8</span>
+  <button id="bNext" type="button" aria-label="Next">Next →</button>
+  <span class="sep"></span>
+  <button id="bReplay" type="button" title="Replay this slide (R)">↻ Replay</button>
+  <button id="bGrid" type="button" title="Slide list (O)">▦ Slides</button>
+  <button id="bFs" type="button" title="Full screen (F)">⤢ Full screen</button>
+</nav>
+
+<div id="overview" role="dialog" aria-modal="true" aria-label="Slide list">
+  <button class="btn ghost" id="ovclose" type="button">Close</button>
+  <h2>Slides</h2>
+  <div id="ovgrid"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(() => {
+  const G = window.gsap || null;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const anim = !!G && !reduce;
+  const stage = document.getElementById('stage');
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let cur = 0, busy = false;
+  const state = slides.map(() => ({ step: 0, tl: null }));
+
+  function fit() {
+    const s = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+    stage.style.transform = `translate(-50%,-50%) scale(${s})`;
+  }
+  window.addEventListener('resize', fit); fit();
+
+  /* split headline words */
+  document.querySelectorAll('[data-anim="words"]').forEach(el => {
+    const out = [];
+    Array.from(el.childNodes).forEach(n => {
+      const wrap = (p, tag, cls) => out.push(/^\s+$/.test(p) ? ' ' : `<span class="w"><span>${tag ? `<${tag} class="${cls}">${p}</${tag}>` : p}</span></span>`);
+      if (n.nodeType === 3) n.textContent.split(/(\s+)/).forEach(p => p && wrap(p));
+      else if (n.nodeType === 1) n.textContent.split(/(\s+)/).forEach(p => p && wrap(p, n.tagName.toLowerCase(), n.className));
+    });
+    el.innerHTML = out.join('');
+  });
+
+  const FROM = { up: { y: 40, autoAlpha: 0 }, fade: { autoAlpha: 0 }, pop: { scale: .6, autoAlpha: 0 } };
+  const stepsOf = s => { let m = 0; s.querySelectorAll('[data-step]').forEach(e => m = Math.max(m, +e.dataset.step)); return m; };
+
+  function prep(slide) {
+    const stepEls = slide.querySelectorAll('[data-step]');
+    if (!anim) { stepEls.forEach(e => e.style.visibility = 'hidden'); return; }
+    slide.querySelectorAll('[data-anim]').forEach(el => {
+      const t = el.dataset.anim;
+      if (t === 'words') { G.set(el, { autoAlpha: 1 }); G.set(el.querySelectorAll('.w>span'), { yPercent: 115 }); }
+      else G.set(el, FROM[t] || FROM.up);
+    });
+    stepEls.forEach(el => G.set(el, FROM.up));
+  }
+
+  function animateIn(i) {
+    const slide = slides[i], st = state[i];
+    if (st.tl) st.tl.kill();
+    const h = hooks[slide.dataset.id]; if (h && h.enter) h.enter(slide);
+    if (!anim) return;
+    const tl = G.timeline({ defaults: { ease: 'power3.out', duration: .7 } });
+    let at = 0;
+    slide.querySelectorAll('[data-anim]:not([data-step])').forEach(el => {
+      if (el.dataset.anim === 'words') { tl.to(el.querySelectorAll('.w>span'), { yPercent: 0, stagger: .08, duration: .8, ease: 'back.out(1.6)' }, at); at += .25; }
+      else if (el.dataset.anim === 'pop') { tl.to(el, { scale: 1, autoAlpha: 1, ease: 'back.out(2)' }, at); at += .08; }
+      else { tl.to(el, { y: 0, autoAlpha: 1 }, at); at += .1; }
+    });
+    st.tl = tl;
+  }
+
+  function reveal(i, k, instant) {
+    const els = slides[i].querySelectorAll(`[data-step="${k}"]`);
+    if (anim && !instant) G.to(els, { y: 0, autoAlpha: 1, duration: .6, ease: 'back.out(1.7)', stagger: .1 });
+    else if (anim) G.set(els, { y: 0, autoAlpha: 1 });
+    else els.forEach(e => e.style.visibility = 'visible');
+  }
+
+  function transition(old, nw, type, dir, onMid, done) {
+    G.set(nw, { zIndex: 2 }); G.set(old, { zIndex: 1 });
+    const tl = G.timeline({ onComplete: () => { G.set([old, nw], { clearProps: 'all' }); done(); } });
+    if (type === 'slide') {
+      tl.fromTo(nw, { xPercent: dir * 100 }, { xPercent: 0, duration: .8, ease: 'power3.inOut' }, 0)
+        .to(old, { xPercent: -dir * 30, autoAlpha: 0, duration: .8, ease: 'power3.inOut' }, 0);
+    } else if (type === 'zoom') {
+      tl.fromTo(nw, { scale: 1.1, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .7, ease: 'power2.out' }, .1)
+        .to(old, { scale: .9, autoAlpha: 0, duration: .5, ease: 'power2.in' }, 0);
+    } else {
+      tl.fromTo(nw, { autoAlpha: 0 }, { autoAlpha: 1, duration: .55 }, .1).to(old, { autoAlpha: 0, duration: .4 }, 0);
+    }
+    tl.call(onMid, null, .4);
+  }
+
+  function go(n, opts = {}) {
+    if (n < 0 || n >= slides.length || busy) return;
+    if (n === cur && !opts.force) return;
+    const old = slides[cur], nw = slides[n], dir = n >= cur ? 1 : -1;
+    const ho = hooks[old.dataset.id]; if (ho && ho.leave) ho.leave(old);
+    if (state[cur].tl) state[cur].tl.kill();
+    cur = n; state[n].step = 0;
+    nw.classList.add('active');
+    prep(nw);
+    const mid = () => {
+      animateIn(n);
+      if (opts.full) { const m = stepsOf(nw); for (let k = 1; k <= m; k++) reveal(n, k, true); state[n].step = m; }
+    };
+    if (anim) G.to('.bg', { x: -n * 50, duration: 1.2, ease: 'power2.inOut' });
+    if (!anim || old === nw) { if (old !== nw) old.classList.remove('active'); mid(); }
+    else { busy = true; transition(old, nw, nw.dataset.transition || 'fade', dir, mid, () => { old.classList.remove('active'); busy = false; }); }
+    updateUI();
+  }
+  function next() {
+    const s = state[cur], m = stepsOf(slides[cur]);
+    if (s.step < m) { s.step++; reveal(cur, s.step); updateUI(); } else go(cur + 1);
+  }
+  function prev() { go(cur - 1, { full: true }); }
+
+  const countEl = document.getElementById('count'), prog = document.getElementById('progress');
+  function updateUI() {
+    countEl.textContent = `${cur + 1} / ${slides.length}`;
+    const m = stepsOf(slides[cur]);
+    prog.style.width = Math.min(1, (cur + (m ? state[cur].step / (m + 1) : 0)) / (slides.length - 1)) * 100 + '%';
+    slides.forEach((s, i) => s.setAttribute('aria-hidden', i === cur ? 'false' : 'true'));
+    try { history.replaceState(null, '', '#slide-' + (cur + 1)); } catch (e) {}
+  }
+  document.getElementById('bNext').onclick = next;
+  document.getElementById('bPrev').onclick = prev;
+  document.getElementById('bReplay').onclick = () => go(cur, { force: true });
+  async function toggleFs() {
+    try { if (!document.fullscreenElement) await document.documentElement.requestFullscreen(); else await document.exitFullscreen(); } catch (e) {}
+  }
+  document.getElementById('bFs').onclick = toggleFs;
+
+  const ov = document.getElementById('overview'), ovgrid = document.getElementById('ovgrid');
+  slides.forEach((s, i) => {
+    const b = document.createElement('button'); b.type = 'button';
+    b.innerHTML = `<span class="on">${String(i + 1).padStart(2, '0')}</span><span class="ot">${s.dataset.title}</span>`;
+    b.onclick = () => { ov.classList.remove('open'); go(i); };
+    ovgrid.appendChild(b);
+  });
+  const openOv = () => { ovgrid.querySelectorAll('button').forEach((b, i) => b.classList.toggle('cur', i === cur)); ov.classList.add('open'); ovgrid.children[cur].focus(); };
+  document.getElementById('bGrid').onclick = openOv;
+  document.getElementById('ovclose').onclick = () => ov.classList.remove('open');
+
+  document.addEventListener('keydown', e => {
+    if (ov.classList.contains('open')) { if (['Escape', 'o', 'O'].includes(e.key)) ov.classList.remove('open'); return; }
+    if ((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('button')) return;
+    switch (e.key) {
+      case 'ArrowRight': case 'PageDown': case ' ': e.preventDefault(); next(); break;
+      case 'ArrowLeft': case 'PageUp': e.preventDefault(); prev(); break;
+      case 'Home': go(0); break;
+      case 'End': go(slides.length - 1, { full: true }); break;
+      case 'o': case 'O': openOv(); break;
+      case 'f': case 'F': toggleFs(); break;
+      case 'r': case 'R': go(cur, { force: true }); break;
+    }
+  });
+  let tx = null;
+  stage.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchend', e => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; tx = null; if (dx < -60) next(); else if (dx > 60) prev(); });
+  let idle;
+  document.addEventListener('mousemove', () => { document.body.classList.add('awake'); clearTimeout(idle); idle = setTimeout(() => document.body.classList.remove('awake'), 2200); });
+
+  /* ---------- sentence builders ---------- */
+  const ACTIONS = [['play', 'football'], ['eat', 'breakfast'], ['read', 'books'], ['drink', 'milk']];
+  function makeBuilder(root, subjects, startSubj) {
+    let subj = startSubj, act = 0;
+    const subjRow = root.querySelector('.subjects'), actRow = root.querySelector('.actions'), out = root.querySelector('.big-sentence');
+    subjRow.innerHTML = ''; actRow.innerHTML = '';
+    subjects.forEach(([label, third], i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = label;
+      b.onclick = () => { subj = i; render(true); }; subjRow.appendChild(b);
+    });
+    ACTIONS.forEach(([v], i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = v;
+      b.onclick = () => { act = i; render(true); }; actRow.appendChild(b);
+    });
+    function render(animate) {
+      const [label, third] = subjects[subj], [v, obj] = ACTIONS[act];
+      subjRow.querySelectorAll('.chip').forEach((c, i) => c.setAttribute('aria-pressed', i === subj ? 'true' : 'false'));
+      actRow.querySelectorAll('.chip').forEach((c, i) => c.setAttribute('aria-pressed', i === act ? 'true' : 'false'));
+      out.innerHTML = `<span class="subj">${label}</span><span class="verb"><span>${v}</span>${third ? '<span class="suf">s</span>' : ''}</span><span>${obj}</span><span class="time">every day.</span>`;
+      if (anim && animate) {
+        G.from(out.children, { y: 20, autoAlpha: 0, stagger: .05, duration: .35, ease: 'power2.out' });
+        const suf = out.querySelector('.suf');
+        if (suf) G.from(suf, { y: -120, rotation: -200, scale: 2.4, duration: .8, delay: .15, ease: 'bounce.out' });
+      }
+    }
+    return { reset() { subj = startSubj; act = 0; render(false); } };
+  }
+  const b1 = makeBuilder(document.getElementById('builder1'), [['I', 0], ['You', 0], ['We', 0], ['They', 0]], 0);
+  const b2 = makeBuilder(document.getElementById('builder2'), [['I', 0], ['He', 1], ['She', 1], ['It', 1], ['Ahmed', 1], ['My cat', 1], ['We', 0]], 1);
+
+  /* ---------- spelling sort ---------- */
+  const WORDS = [['play', 's', 'play', 's'], ['watch', 'es', 'watch', 'es'], ['study', 'ies', 'stud', 'ies'], ['read', 's', 'read', 's'],
+                 ['go', 'es', 'go', 'es'], ['fly', 'ies', 'fl', 'ies'], ['wash', 'es', 'wash', 'es'], ['eat', 's', 'eat', 's']];
+  const pool = document.getElementById('pool'), sortMsg = document.getElementById('sortMsg');
+  function resetSort() {
+    pool.innerHTML = ''; document.querySelectorAll('.got').forEach(g => g.innerHTML = ''); sortMsg.textContent = '';
+    WORDS.forEach(([w, b, stem, end]) => {
+      const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'word'; btn.textContent = w;
+      btn.onclick = () => {
+        const done = document.createElement('span'); done.className = 'done';
+        done.innerHTML = `he ${stem}<span class="suf">${end}</span>`;
+        const go = () => {
+          btn.remove(); document.querySelector(`.got[data-b="${b}"]`).appendChild(done);
+          if (anim) G.from(done, { scale: 0, duration: .5, ease: 'back.out(2.2)' });
+          if (!pool.children.length) sortMsg.textContent = 'All sorted! Why is "play" + s? A vowel (a) comes before the y.';
+        };
+        if (anim) G.to(btn, { scale: 1.25, autoAlpha: 0, duration: .25, onComplete: go }); else go();
+      };
+      pool.appendChild(btn);
+    });
+  }
+  document.getElementById('sortReset').onclick = resetSort;
+
+  /* ---------- frequency dots ---------- */
+  document.querySelectorAll('.dots').forEach(d => {
+    const on = +d.dataset.on;
+    for (let i = 0; i < 7; i++) { const s = document.createElement('span'); s.className = 'dot' + (i < on ? ' on' : ''); d.appendChild(s); }
+    d.setAttribute('aria-label', `${on} of 7 days`); d.setAttribute('role', 'img');
+  });
+
+  /* ---------- quiz ---------- */
+  const QUIZ = [
+    ['She', 'to school by bus.', ['go', 'goes'], 1, 'She → add es: goes'],
+    ['My dad', 'karak tea every morning.', ['drink', 'drinks'], 1, 'My dad = he → drinks'],
+    ['We', 'football on Fridays.', ['play', 'plays'], 0, 'We → no s: play'],
+    ['Ahmed', 'English every day.', ['studys', 'studies'], 1, 'Consonant + y → ies: studies']
+  ];
+  const quiz = document.getElementById('quiz'), scoreTxt = document.getElementById('scoreTxt'), stars = document.getElementById('stars');
+  let score = 0;
+  const STAR = on => `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="${on ? 'var(--sun)' : '#e6eaf6'}" stroke="${on ? '#e0a51f' : '#d3d9ea'}" stroke-width="2" stroke-linejoin="round"/></svg>`;
+  function drawStars() { stars.innerHTML = [0, 1, 2, 3].map(i => STAR(i < score)).join(''); scoreTxt.textContent = `${score} / 4`; }
+  function resetQuiz() {
+    score = 0; quiz.innerHTML = '';
+    QUIZ.forEach(([subj, rest, opts, right, why]) => {
+      const card = document.createElement('div'); card.className = 'panel q';
+      card.innerHTML = `<p class="stem">${subj} <span class="gap">&nbsp;</span> ${rest}</p><div class="opts"></div><p class="fb" aria-live="polite"></p>`;
+      const box = card.querySelector('.opts'), gap = card.querySelector('.gap'), fb = card.querySelector('.fb');
+      let tried = false;
+      opts.forEach((o, i) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.textContent = o;
+        b.onclick = () => {
+          if (card.classList.contains('solved')) return;
+          if (i === right) {
+            b.classList.add('right'); card.classList.add('solved'); gap.textContent = o; fb.textContent = why; fb.style.color = 'var(--teal)';
+            if (!tried) score++; drawStars();
+            if (anim) { G.from(gap, { scale: 1.6, duration: .5, ease: 'back.out(3)' }); G.fromTo(stars.children[score - 1] || [], { scale: .2 }, { scale: 1, duration: .5, ease: 'back.out(3)' }); }
+          } else {
+            tried = true; b.classList.add('wrong'); fb.textContent = 'Try again!'; fb.style.color = 'var(--coral)';
+            if (anim) G.fromTo(b, { x: -10 }, { x: 0, duration: .4, ease: 'elastic.out(1,.3)' });
+          }
+        };
+        box.appendChild(b);
+      });
+      quiz.appendChild(card);
+    });
+    drawStars();
+  }
+
+  /* ---------- pair-talk timer ---------- */
+  const tRing = document.getElementById('tRing'), tText = document.getElementById('tText'), C = 785.4, TOTAL = 60;
+  let left = TOTAL, iv = null;
+  function drawTimer() {
+    tText.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
+    tRing.setAttribute('stroke-dashoffset', C * (1 - left / TOTAL));
+    tRing.setAttribute('stroke', left <= 10 ? 'var(--coral)' : 'var(--teal)');
+  }
+  function stopTimer() { clearInterval(iv); iv = null; document.getElementById('tStart').textContent = 'Start'; }
+  function resetTimer() { stopTimer(); left = TOTAL; drawTimer(); }
+  document.getElementById('tStart').onclick = () => {
+    if (iv) { stopTimer(); return; }
+    if (left === 0) left = TOTAL;
+    document.getElementById('tStart').textContent = 'Pause';
+    iv = setInterval(() => { left = Math.max(0, left - 1); drawTimer(); if (!left) { stopTimer(); tText.textContent = 'Done!'; } }, 1000);
+  };
+  document.getElementById('tReset').onclick = resetTimer;
+
+  /* ---------- hooks ---------- */
+  let raysTween = null;
+  const hooks = {
+    b1: { enter() { b1.reset(); } },
+    b2: { enter() { b2.reset(); } },
+    sort: { enter() { resetSort(); } },
+    quiz: { enter() { resetQuiz(); } },
+    close: { enter() { resetTimer(); }, leave() { stopTimer(); } }
+  };
+  // title sun rays spin gently
+  if (anim) raysTween = G.to('#rays', { rotation: 360, svgOrigin: '260 260', duration: 40, repeat: -1, ease: 'none' });
+
+  /* ---------- start ---------- */
+  const m = /^#slide-(\d+)$/.exec(location.hash);
+  cur = m ? Math.min(slides.length, Math.max(1, +m[1])) - 1 : 0;
+  slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+  prep(slides[cur]);
+  const begin = () => { animateIn(cur); if (anim) G.set('.bg', { x: -cur * 50 }); updateUI(); };
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(begin); else begin();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Literacy for Teachers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: a fixed 1600x900 stage scaled to the window. Colour carries meaning: gold = the teacher's judgment, sky = the machine, rose = caution */
+  --ink:#0c1220;
+  --panel:#151d31;
+  --line:#28334e;
+  --text:#eef1f7;
+  --muted:#9ba7c0;
+  --gold:#f2bb4e;
+  --sky:#7db4ff;
+  --rose:#ef6a8b;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Instrument Sans","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:#070b14;color:var(--text);font-family:var(--body);overflow:hidden}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%);overflow:hidden;background:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.bg{position:absolute;top:0;bottom:0;left:-10%;width:160%;pointer-events:none;
+  background:
+   radial-gradient(28% 42% at 14% 26%, rgba(125,180,255,.16), transparent 70%),
+   radial-gradient(26% 40% at 44% 82%, rgba(242,187,78,.10), transparent 70%),
+   radial-gradient(24% 38% at 78% 30%, rgba(239,106,139,.08), transparent 70%),
+   linear-gradient(rgba(40,51,78,.45) 1px, transparent 1px) 0 0/80px 80px,
+   linear-gradient(90deg, rgba(40,51,78,.45) 1px, transparent 1px) 0 0/80px 80px;}
+
+.slide{position:absolute;inset:0;padding:84px 110px 120px;display:none;flex-direction:column}
+.slide.active{display:flex}
+.eyebrow{font:700 17px/1 var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:0 0 20px}
+h1{font:800 100px/1.0 var(--display);letter-spacing:-.025em;margin:0;text-wrap:balance}
+h2{font:700 60px/1.06 var(--display);letter-spacing:-.018em;margin:0 0 34px;text-wrap:balance;max-width:1250px}
+h3{font:700 32px/1.15 var(--display);margin:0 0 10px}
+p{margin:0}
+.lead{font-size:28px;line-height:1.45;color:var(--muted);max-width:780px}
+.gold{color:var(--gold)} .sky{color:var(--sky)} .rose{color:var(--rose)}
+em{font-style:normal}
+.src{position:absolute;left:110px;bottom:58px;font-size:15px;color:var(--muted);max-width:1100px}
+.num{position:absolute;right:110px;bottom:56px;font:700 15px var(--body);letter-spacing:.15em;color:var(--muted)}
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.1em;margin-bottom:-.1em}
+.w>span{display:inline-block}
+.tag{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px dashed var(--line);border-radius:999px;padding:7px 14px}
+.btn{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 22px;font-size:20px;font-weight:600;cursor:pointer;transition:border-color .2s,background .2s}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--sky);color:#0b1426;border-color:var(--sky)}
+.btn.primary:hover{background:#9cc6ff}
+.btn:disabled{opacity:.4;cursor:default}
+.hint{font-size:17px;color:var(--muted)}
+
+/* 1 title */
+.title-row{display:grid;grid-template-columns:860px 1fr;align-items:center;gap:40px;flex:1}
+.byline{margin-top:46px;display:flex;align-items:center;gap:16px;font-size:20px;color:var(--muted)}
+.byline b{color:var(--text);font-weight:600}
+.byline .bar{width:46px;height:3px;background:var(--gold)}
+.venn text{font-family:var(--body);font-size:21px;font-weight:600;fill:var(--text)}
+.venn .lbl-ai{fill:var(--sky)} .venn .lbl-t{fill:var(--gold)}
+.venn .mid{font-family:var(--display);font-size:30px;font-weight:800}
+.keyhint{position:absolute;left:110px;bottom:58px;font-size:16px;color:var(--muted)}
+kbd{font:600 14px var(--body);border:1px solid var(--line);border-bottom-width:3px;border-radius:6px;padding:2px 8px;color:var(--text)}
+
+/* 2 adoption */
+.adopt{display:grid;grid-template-columns:420px 1fr;gap:70px;align-items:center;flex:1}
+.big{font:800 190px/0.9 var(--display);letter-spacing:-.04em;color:var(--gold);font-variant-numeric:tabular-nums}
+.big-cap{font-size:25px;line-height:1.4;color:var(--muted);margin-top:18px}
+.big-cap b{color:var(--text);font-weight:600}
+.chartbox{background:rgba(21,29,49,.75);border:1px solid var(--line);border-radius:18px;padding:28px 32px 20px}
+.chartbox h4{margin:0 0 6px;font:600 21px var(--body)}
+.chartbox .sub{font-size:16px;color:var(--muted);margin-bottom:12px}
+.chart-wrap{position:relative;height:300px}
+
+/* 3 barrier */
+.rings{display:grid;grid-template-columns:repeat(2,1fr) 1.15fr;gap:46px;align-items:center;flex:1}
+.ring{display:flex;flex-direction:column;align-items:center;text-align:center}
+.ring svg{width:250px;height:250px}
+.ring .pct{font:800 64px var(--display);fill:var(--text)}
+.ring p{font-size:22px;line-height:1.4;color:var(--muted);margin-top:16px;max-width:300px}
+.ring p b{color:var(--text);font-weight:600}
+.callout{border-left:4px solid var(--gold);padding:8px 0 8px 28px}
+.callout p{font:600 34px/1.25 var(--display)}
+.callout small{display:block;margin-top:16px;font-size:18px;color:var(--muted);line-height:1.45}
+
+/* 4 pillars */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;flex:1;align-items:stretch;margin-top:6px}
+.pillar{background:rgba(21,29,49,.8);border:1px solid var(--line);border-radius:18px;padding:34px 32px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden}
+.pillar::before{content:"";position:absolute;left:0;top:0;right:0;height:4px;background:var(--c)}
+.pillar .k{font:700 16px var(--body);letter-spacing:.16em;color:var(--c);text-transform:uppercase}
+.pillar p{font-size:23px;line-height:1.45;color:var(--muted)}
+.pillar svg{width:58px;height:58px}
+.pillar q{display:block;margin-top:auto;font-size:20px;line-height:1.4;color:var(--text);quotes:none;padding-top:16px;border-top:1px solid var(--line)}
+
+/* 5 predict */
+.predict{display:grid;grid-template-columns:400px 1fr;gap:60px;flex:1}
+.predict .explain p{font-size:23px;line-height:1.5;color:var(--muted)}
+.predict .explain p+p{margin-top:18px}
+.predict .explain b{color:var(--text);font-weight:600}
+.demo{background:rgba(21,29,49,.85);border:1px solid var(--line);border-radius:18px;padding:30px 34px;display:flex;flex-direction:column;gap:22px}
+.sentence{font:600 38px/1.3 var(--display);min-height:100px}
+.sentence .new{color:var(--sky)}
+.caret{display:inline-block;width:3px;height:1em;background:var(--sky);vertical-align:-.12em;margin-left:6px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.cands{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.cands li{display:grid;grid-template-columns:200px 1fr 70px;align-items:center;gap:16px;font-size:21px}
+.cands .track{display:block;height:24px;background:rgba(155,167,192,.12);border-radius:6px;overflow:hidden}
+.cands .fill{display:block;height:100%;width:0;background:rgba(125,180,255,.45);border-radius:6px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.cands li.top .fill{background:var(--sky)}
+.cands li.top .word{color:var(--sky);font-weight:700}
+.cands .val{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.demo-actions{display:flex;align-items:center;gap:14px}
+.demo-actions .tag{margin-left:auto}
+.takeaway{margin-top:22px;font:600 26px/1.35 var(--display)}
+.takeaway .rose{font-weight:800}
+
+/* 6 cards */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,212px);gap:24px;margin-top:4px}
+.card{perspective:1200px;background:none;border:0;padding:0;cursor:pointer;text-align:left;height:212px}
+.card .in{position:relative;width:100%;height:100%;transition:transform .75s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
+.card.flipped .in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:26px 30px;display:flex;flex-direction:column;justify-content:center;gap:10px;border:1px solid var(--line)}
+.front{background:rgba(21,29,49,.9)}
+.front .t{font:700 32px var(--display)}
+.front .h{font-size:16px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.back{transform:rotateY(180deg);background:var(--panel)}
+.back .v{font:700 16px var(--body);letter-spacing:.16em;text-transform:uppercase}
+.back p{font-size:21px;line-height:1.42}
+.card[data-k="strong"] .back{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.card[data-k="strong"] .back .v{color:var(--gold)}
+.card[data-k="weak"] .back{border-color:var(--rose);box-shadow:inset 0 0 0 1px var(--rose)}
+.card[data-k="weak"] .back .v{color:var(--rose)}
+.cards-foot{display:flex;align-items:center;gap:18px;margin-top:22px}
+
+/* 7 unesco */
+.unesco{display:grid;grid-template-columns:660px 1fr;gap:50px;flex:1}
+.wheel{position:relative;width:660px;height:560px}
+.wheel svg{position:absolute;inset:0}
+.hub{position:absolute;left:240px;top:190px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #22304f, var(--panel));border:2px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.hub b{font:800 54px/1 var(--display);color:var(--gold)}
+.hub span{font-size:17px;color:var(--muted);margin-top:4px;line-height:1.25}
+.dim{position:absolute;width:190px;min-height:78px;border-radius:14px;background:var(--panel);border:1px solid var(--line);font:600 18px/1.25 var(--body);padding:12px 14px;cursor:pointer;text-align:center;transition:border-color .25s,background .25s,transform .25s}
+.dim:hover{border-color:var(--muted)}
+.dim[aria-pressed="true"]{border-color:var(--gold);background:#2a2717;color:var(--gold);transform:scale(1.06)}
+.detail{background:rgba(21,29,49,.85);border:1px solid var(--line);border-radius:18px;padding:34px 36px;display:flex;flex-direction:column;gap:16px;align-self:start;min-height:330px}
+.detail .n{font:700 16px var(--body);letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
+.detail p{font-size:23px;line-height:1.5;color:var(--muted)}
+.detail .ex{font-size:21px;color:var(--text);border-top:1px solid var(--line);padding-top:16px}
+.detail .ex b{color:var(--gold)}
+.levels{display:flex;align-items:center;gap:14px;margin-top:26px}
+.levels .lv{padding:12px 20px;border-radius:999px;border:1px solid var(--line);font-weight:600;font-size:19px;background:var(--panel)}
+.levels .lv:nth-child(5){border-color:var(--gold);color:var(--gold)}
+.levels .arr{color:var(--muted);font-size:22px}
+.levels .cap{font-size:17px;color:var(--muted);margin-right:6px}
+
+/* 8 loop */
+.loop{display:grid;grid-template-columns:1000px 1fr;gap:40px;flex:1;margin-top:-10px}
+.ldiag{position:relative;width:1000px;height:640px}
+.ldiag svg{position:absolute;inset:0}
+.node{position:absolute;width:210px;height:74px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:10px;font:700 23px var(--display);background:var(--panel);border:2px solid var(--gold);color:var(--text)}
+.node.ai{border-color:var(--sky);color:var(--sky);background:#14223d}
+.node i{font:700 14px var(--body);font-style:normal;color:var(--muted)}
+.legend{display:flex;flex-direction:column;gap:16px;justify-content:center}
+.legend .li{display:flex;align-items:center;gap:12px;font-size:20px;color:var(--muted)}
+.legend .sw{width:22px;height:22px;border-radius:6px;border:2px solid}
+.legend .msg{font:600 30px/1.3 var(--display);margin-top:20px}
+.ctr{font-family:var(--display);font-weight:800;font-size:34px;fill:var(--text)}
+.ctr-sub{font-family:var(--body);font-size:18px;fill:var(--muted)}
+
+/* 9 prompt */
+.prompt{display:grid;grid-template-columns:470px 1fr;gap:46px;flex:1}
+.pcard{background:rgba(21,29,49,.85);border:1px solid var(--line);border-radius:18px;padding:30px 32px;display:flex;flex-direction:column;gap:14px}
+.pcard .k{font:700 16px var(--body);letter-spacing:.16em;text-transform:uppercase}
+.pcard .code{font:500 24px/1.45 var(--body);background:#0f1628;border-radius:10px;padding:18px 20px;border:1px solid var(--line)}
+.pcard .res{font-size:20px;line-height:1.45;color:var(--muted)}
+.pcard.weak .k{color:var(--rose)}
+.pcard.strong{border-color:rgba(242,187,78,.5)}
+.pcard.strong .k{color:var(--gold)}
+.pline{display:grid;grid-template-columns:120px 1fr;gap:18px;align-items:baseline;font-size:22px;line-height:1.42;padding:11px 0;border-bottom:1px solid var(--line)}
+.pline:last-of-type{border-bottom:0}
+.ptag{font:700 15px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--sky)}
+.review{margin-top:6px;display:flex;align-items:center;gap:12px;font:700 24px var(--display);color:var(--gold)}
+
+/* 10 ethics */
+.scns{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:4px}
+.scn{background:rgba(21,29,49,.9);border:1px solid var(--line);border-radius:16px;padding:26px 30px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:14px;min-height:196px;transition:border-color .3s}
+.scn .q{font:600 24px/1.35 var(--display)}
+.scn .verdict{display:none;font-size:20px;line-height:1.45;color:var(--muted)}
+.scn .verdict b{display:inline-block;padding:3px 12px;border-radius:999px;margin-right:8px;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:#0b1426}
+.scn.open .verdict{display:block;animation:pop .45s cubic-bezier(.2,.8,.2,1)}
+.scn .q-hint{font-size:16px;color:var(--muted)}
+.scn.open .q-hint{display:none}
+.scn[data-v="red"].open{border-color:var(--rose)} .scn[data-v="red"] .verdict b{background:var(--rose)}
+.scn[data-v="green"].open{border-color:#6fd39b} .scn[data-v="green"] .verdict b{background:#6fd39b}
+.scn[data-v="amber"].open{border-color:var(--gold)} .scn[data-v="amber"] .verdict b{background:var(--gold)}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* 11 monday */
+.steps{display:flex;flex-direction:column;gap:22px;margin-top:6px;max-width:1220px}
+.st{display:grid;grid-template-columns:110px 1fr;gap:26px;align-items:start;background:rgba(21,29,49,.8);border:1px solid var(--line);border-radius:18px;padding:26px 32px}
+.st .n{font:800 64px/1 var(--display);color:var(--gold)}
+.st h3{font-size:30px}
+.st p{font-size:22px;line-height:1.45;color:var(--muted)}
+
+/* 12 close */
+.close-wrap{flex:1;display:flex;flex-direction:column;justify-content:center}
+.close-wrap h1{font-size:132px}
+.close-wrap .lead{margin-top:30px}
+.sources{margin-top:56px;font-size:17px;line-height:1.6;color:var(--muted)}
+.sources b{color:var(--text);font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:14px;display:block;margin-bottom:6px}
+
+/* chrome */
+#progress{position:absolute;left:0;bottom:0;height:4px;width:0;background:linear-gradient(90deg,var(--sky),var(--gold));z-index:5;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+#controls{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:rgba(12,18,32,.88);border:1px solid var(--line);border-radius:14px;padding:6px;z-index:20;opacity:.4;transition:opacity .3s;backdrop-filter:blur(8px)}
+#controls:hover,#controls:focus-within,body.awake #controls{opacity:1}
+#controls button{background:none;border:0;border-radius:9px;padding:9px 13px;font-size:15px;font-weight:600;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:6px}
+#controls button:hover{background:var(--panel)}
+#controls .sep{width:1px;height:24px;background:var(--line);margin:0 4px}
+#count{font-size:15px;font-variant-numeric:tabular-nums;color:var(--muted);min-width:64px;text-align:center}
+#overview{position:fixed;inset:0;background:rgba(7,11,20,.94);z-index:30;display:none;padding:60px 70px;overflow:auto}
+#overview.open{display:block}
+#overview h2{font-size:34px;margin-bottom:26px}
+#ovgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+#ovgrid button{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;text-align:left;cursor:pointer;min-height:120px;display:flex;flex-direction:column;gap:10px}
+#ovgrid button:hover{border-color:var(--muted)}
+#ovgrid button.cur{border-color:var(--gold)}
+#ovgrid .on{font:700 14px var(--body);letter-spacing:.14em;color:var(--gold)}
+#ovgrid .ot{font:700 21px/1.25 var(--display)}
+#ovclose{position:absolute;top:44px;right:60px}
+
+@media (prefers-reduced-motion: reduce){
+  .card .in{transition:none}
+  .cands .fill,#progress{transition:none}
+  .caret{animation:none}
+  .scn.open .verdict{animation:none}
+}
+</style>
+</head>
+<body>
+<div id="stage" role="region" aria-roledescription="presentation" aria-label="AI Literacy for Teachers">
+  <div class="bg" aria-hidden="true"></div>
+
+  <!-- 1 -->
+  <section class="slide active" data-title="Teaching with AI, thinking for yourself" data-transition="fade" aria-label="Slide 1">
+    <div class="title-row">
+      <div>
+        <p class="eyebrow" data-anim="fade">Teacher training · AI literacy</p>
+        <h1 data-anim="words">Teaching with AI, <em class="gold">thinking</em> for yourself</h1>
+        <p class="lead" style="margin-top:34px" data-anim="up">What every teacher needs to know to use AI well, safely and on their own terms.</p>
+        <div class="byline" data-anim="up"><span class="bar"></span><span><b>Sharief Abdelmonem</b> · AI Integration Coach</span></div>
+      </div>
+      <svg class="venn" viewBox="0 0 640 560" aria-label="Diagram: teacher judgment and AI capability overlap in AI literacy">
+        <circle cx="240" cy="280" r="190" fill="rgba(242,187,78,.07)" stroke="var(--gold)" stroke-width="3" class="draw"/>
+        <circle cx="400" cy="280" r="190" fill="rgba(125,180,255,.07)" stroke="var(--sky)" stroke-width="3" class="draw"/>
+        <g data-anim="fade" data-delay=".9">
+          <text x="140" y="285" text-anchor="middle" class="lbl-t">Teacher</text>
+          <text x="140" y="312" text-anchor="middle" class="lbl-t">judgment</text>
+          <text x="500" y="285" text-anchor="middle" class="lbl-ai">AI</text>
+          <text x="500" y="312" text-anchor="middle" class="lbl-ai">capability</text>
+          <text x="320" y="272" text-anchor="middle" class="mid">AI</text>
+          <text x="320" y="306" text-anchor="middle" class="mid">literacy</text>
+        </g>
+      </svg>
+    </div>
+    <p class="keyhint" data-anim="fade">Press <kbd>→</kbd> or <kbd>Space</kbd> to advance · <kbd>O</kbd> slide list · <kbd>F</kbd> full screen</p>
+  </section>
+
+  <!-- 2 -->
+  <section class="slide" data-id="adoption" data-title="AI is already in the staffroom" data-transition="slide" aria-label="Slide 2">
+    <p class="eyebrow" data-anim="fade">Where we are</p>
+    <h2 data-anim="words">AI is already in the staffroom</h2>
+    <div class="adopt">
+      <div data-anim="left">
+        <div class="big"><span class="count" data-to="36">36</span>%</div>
+        <p class="big-cap">of lower secondary teachers across the OECD <b>used AI in their work</b> in the year before the survey.</p>
+      </div>
+      <div class="chartbox" data-anim="up">
+        <h4>Teachers who used AI in their work</h4>
+        <div class="sub">Share of lower secondary teachers, 2024 · UAE and Singapore are approximate</div>
+        <div class="chart-wrap"><canvas id="adoptChart" role="img" aria-label="Bar chart: around 75% in the United Arab Emirates, around 75% in Singapore, 36% OECD average"></canvas></div>
+      </div>
+    </div>
+    <p class="src">Source: OECD, Results from TALIS 2024 (data collected 2024 from lower secondary teachers).</p>
+    <span class="num">02</span>
+  </section>
+
+  <!-- 3 -->
+  <section class="slide" data-id="barrier" data-title="The real barrier is know-how" data-transition="zoom" aria-label="Slide 3">
+    <p class="eyebrow" data-anim="fade">Why some teachers hold back</p>
+    <h2 data-anim="words">The real barrier is <em class="gold">know-how</em></h2>
+    <div class="rings">
+      <div class="ring" data-anim="scale">
+        <svg viewBox="0 0 260 260" aria-hidden="true">
+          <circle cx="130" cy="130" r="110" fill="none" stroke="rgba(155,167,192,.15)" stroke-width="20"/>
+          <circle class="ringp" data-p="75" cx="130" cy="130" r="110" fill="none" stroke="var(--gold)" stroke-width="20" stroke-linecap="round" transform="rotate(-90 130 130)" stroke-dasharray="691.15" stroke-dashoffset="172.79"/>
+          <text x="130" y="152" text-anchor="middle" class="pct"><tspan class="count" data-to="75">75</tspan>%</text>
+        </svg>
+        <p>say they <b>lack the knowledge and skills</b> to teach with AI</p>
+      </div>
+      <div class="ring" data-anim="scale">
+        <svg viewBox="0 0 260 260" aria-hidden="true">
+          <circle cx="130" cy="130" r="110" fill="none" stroke="rgba(155,167,192,.15)" stroke-width="20"/>
+          <circle class="ringp" data-p="37" cx="130" cy="130" r="110" fill="none" stroke="var(--sky)" stroke-width="20" stroke-linecap="round" transform="rotate(-90 130 130)" stroke-dasharray="691.15" stroke-dashoffset="435.42"/>
+          <text x="130" y="152" text-anchor="middle" class="pct"><tspan class="count" data-to="37">37</tspan>%</text>
+        </svg>
+        <p>say their <b>school lacks the infrastructure</b></p>
+      </div>
+      <div class="callout" data-step="1">
+        <p>Where teachers had AI training, far more of them use AI in class.</p>
+        <small>That is the case for today's session: skills come first, and the tools follow.</small>
+      </div>
+    </div>
+    <p class="src">Teachers who had not used AI in the past 12 months; OECD averages; more than one reason could be given. Source: OECD, Results from TALIS 2024.</p>
+    <span class="num">03</span>
+  </section>
+
+  <!-- 4 -->
+  <section class="slide" data-title="What AI literacy means for a teacher" data-transition="wipe" aria-label="Slide 4">
+    <p class="eyebrow" data-anim="fade">Definition</p>
+    <h2 data-anim="words">What AI literacy means for a teacher</h2>
+    <div class="pillars">
+      <div class="pillar" style="--c:var(--sky)" data-step="1">
+        <svg viewBox="0 0 58 58" fill="none" stroke="var(--sky)" stroke-width="3" aria-hidden="true"><circle cx="29" cy="29" r="22"/><path d="M29 18v13l8 5"/></svg>
+        <span class="k">Understand</span>
+        <h3>How it produces answers</h3>
+        <p>Enough of the mechanics to explain why it sounds sure and can still be wrong.</p>
+        <q>"It predicts text. It doesn't look things up."</q>
+      </div>
+      <div class="pillar" style="--c:var(--gold)" data-step="2">
+        <svg viewBox="0 0 58 58" fill="none" stroke="var(--gold)" stroke-width="3" aria-hidden="true"><path d="M29 8v42M12 18h34M12 18l-7 16h14zM46 18l-7 16h14z"/></svg>
+        <span class="k">Judge</span>
+        <h3>Whether the output is good</h3>
+        <p>Checking for errors, invented facts, bias and the wrong level for your learners.</p>
+        <q>"Is this accurate, fair and right for my class?"</q>
+      </div>
+      <div class="pillar" style="--c:var(--rose)" data-step="3">
+        <svg viewBox="0 0 58 58" fill="none" stroke="var(--rose)" stroke-width="3" aria-hidden="true"><path d="M10 30l12 12 26-26"/></svg>
+        <span class="k">Decide</span>
+        <h3>When to use it, and when not to</h3>
+        <p>Choosing the tasks where AI helps learning, and protecting the ones where it would get in the way.</p>
+        <q>"Does this help my students think, or think for them?"</q>
+      </div>
+    </div>
+    <span class="num">04</span>
+  </section>
+
+  <!-- 5 -->
+  <section class="slide" data-id="predict" data-title="It predicts. It doesn't know." data-transition="fade" aria-label="Slide 5">
+    <p class="eyebrow" data-anim="fade">Understand · how a chatbot writes</p>
+    <h2 data-anim="words">It predicts. It doesn't <em class="sky">know.</em></h2>
+    <div class="predict">
+      <div class="explain" data-anim="left">
+        <p>Chatbots such as ChatGPT, Gemini and Claude write <b>one small piece at a time</b>, each time picking a likely next word from patterns in their training text.</p>
+        <p>Try it: press <b>Predict next word</b> and watch the sentence grow.</p>
+        <p class="takeaway" data-step="1"><span class="rose">Plausible isn't the same as true.</span> Nothing in this process checks facts, so a confident answer can still be wrong.</p>
+      </div>
+      <div class="demo" data-anim="up">
+        <div class="sentence" id="sent" aria-live="polite"></div>
+        <ul class="cands" id="cands" aria-label="Candidate next words"></ul>
+        <div class="demo-actions">
+          <button class="btn primary" id="predictBtn" type="button">Predict next word</button>
+          <button class="btn" id="predictReset" type="button">Reset</button>
+          <span class="tag">Illustrative probabilities</span>
+        </div>
+      </div>
+    </div>
+    <span class="num">05</span>
+  </section>
+
+  <!-- 6 -->
+  <section class="slide" data-id="cards" data-title="Strong at, weak at" data-transition="slide" aria-label="Slide 6">
+    <p class="eyebrow" data-anim="fade">Judge · know the limits</p>
+    <h2 data-anim="words">Where it helps, and where it <em class="rose">slips</em></h2>
+    <div class="cards">
+      <button class="card" data-k="strong" type="button" data-anim="up"><div class="in"><div class="face front"><span class="h">Task</span><span class="t">Drafting and rewording</span></div><div class="face back"><span class="v">Strong</span><p>Fast first drafts, simpler versions of a text, many examples in seconds.</p></div></div></button>
+      <button class="card" data-k="strong" type="button" data-anim="up"><div class="in"><div class="face front"><span class="h">Task</span><span class="t">Generating questions</span></div><div class="face back"><span class="v">Strong</span><p>Plenty of options quickly. You choose the good ones and drop the rest.</p></div></div></button>
+      <button class="card" data-k="strong" type="button" data-anim="up"><div class="in"><div class="face front"><span class="h">Task</span><span class="t">Explaining another way</span></div><div class="face back"><span class="v">Strong</span><p>New analogies and step-by-step versions when your first explanation doesn't land.</p></div></div></button>
+      <button class="card" data-k="weak" type="button" data-anim="up"><div class="in"><div class="face front"><span class="h">Task</span><span class="t">Facts and references</span></div><div class="face back"><span class="v">Check carefully</span><p>It can invent sources, quotes and numbers that look real. This is called hallucination.</p></div></div></button>
+      <button class="card" data-k="weak" type="button" data-anim="up"><div class="in"><div class="face front"><span class="h">Task</span><span class="t">Knowing your students</span></div><div class="face back"><span class="v">Check carefully</span><p>It knows nothing about your class, their needs or your school unless you tell it.</p></div></div></button>
+      <button class="card" data-k="weak" type="button" data-anim="up"><div class="in"><div class="face front"><span class="h">Task</span><span class="t">Fairness</span></div><div class="face back"><span class="v">Check carefully</span><p>It can repeat biases and stereotypes found in the text it learned from.</p></div></div></button>
+    </div>
+    <div class="cards-foot" data-anim="fade"><button class="btn" id="flipAll" type="button">Flip all</button><span class="hint">Ask the room to guess first, then click each card.</span></div>
+    <span class="num">06</span>
+  </section>
+
+  <!-- 7 -->
+  <section class="slide" data-id="unesco" data-title="UNESCO's AI competency framework for teachers" data-transition="zoom" aria-label="Slide 7">
+    <p class="eyebrow" data-anim="fade">A global reference</p>
+    <h2 data-anim="words" style="margin-bottom:14px">UNESCO's AI competency framework for teachers</h2>
+    <div class="unesco">
+      <div class="wheel">
+        <svg viewBox="0 0 660 560" aria-hidden="true">
+          <g stroke="var(--line)" stroke-width="2">
+            <line class="draw" x1="330" y1="280" x2="330" y2="74"/>
+            <line class="draw" x1="330" y1="280" x2="549" y2="213"/>
+            <line class="draw" x1="330" y1="280" x2="465" y2="470"/>
+            <line class="draw" x1="330" y1="280" x2="195" y2="470"/>
+            <line class="draw" x1="330" y1="280" x2="111" y2="213"/>
+          </g>
+        </svg>
+        <div class="hub" data-anim="scale"><b>15</b><span>competencies<br>in 5 dimensions</span></div>
+        <button class="dim" type="button" data-i="0" style="left:235px;top:34px" data-anim="fade">Human-centred mindset</button>
+        <button class="dim" type="button" data-i="1" style="left:454px;top:174px" data-anim="fade">Ethics of AI</button>
+        <button class="dim" type="button" data-i="2" style="left:370px;top:431px" data-anim="fade">AI foundations and applications</button>
+        <button class="dim" type="button" data-i="3" style="left:100px;top:431px" data-anim="fade">AI pedagogy</button>
+        <button class="dim" type="button" data-i="4" style="left:16px;top:174px" data-anim="fade">AI for professional learning</button>
+      </div>
+      <div>
+        <div class="detail" data-anim="right" aria-live="polite">
+          <span class="n" id="dN">Dimension 1 of 5</span>
+          <h3 id="dT">Human-centred mindset</h3>
+          <p id="dD"></p>
+          <p class="ex" id="dE"></p>
+        </div>
+        <div class="levels" data-anim="up" data-delay=".3">
+          <span class="cap">Three levels:</span>
+          <span class="lv">Acquire</span><span class="arr">→</span><span class="lv">Deepen</span><span class="arr">→</span><span class="lv">Create</span>
+        </div>
+      </div>
+    </div>
+    <p class="src">Source: UNESCO (2024), AI competency framework for teachers. Descriptions paraphrased; classroom examples are ours.</p>
+    <span class="num">07</span>
+  </section>
+
+  <!-- 8 -->
+  <section class="slide" data-id="loop" data-title="Keep the teacher in the loop" data-transition="fade" aria-label="Slide 8">
+    <p class="eyebrow" data-anim="fade">Decide · a working routine</p>
+    <h2 data-anim="words" style="margin-bottom:0">Keep the teacher in the loop</h2>
+    <div class="loop">
+      <div class="ldiag">
+        <svg viewBox="0 0 1000 640" aria-hidden="true">
+          <path id="loopPath" class="draw" d="M 120 320 A 380 225 0 1 1 880 320 A 380 225 0 1 1 120 320" fill="none" stroke="var(--line)" stroke-width="3" stroke-dasharray="4 10"/>
+          <circle id="loopDot" r="9" cx="120" cy="320" fill="var(--gold)"/>
+          <g data-anim="fade" data-delay=".6">
+            <text x="500" y="312" text-anchor="middle" class="ctr">One lesson,</text>
+            <text x="500" y="350" text-anchor="middle" class="ctr">one cycle</text>
+          </g>
+        </svg>
+        <div class="node" style="left:395px;top:58px" data-anim="scale">Plan</div>
+        <div class="node" style="left:724px;top:171px" data-anim="scale">Prompt</div>
+        <div class="node ai" style="left:724px;top:396px" data-anim="scale">Generate <i>AI</i></div>
+        <div class="node" style="left:395px;top:508px" data-anim="scale">Review</div>
+        <div class="node" style="left:66px;top:396px" data-anim="scale">Adapt</div>
+        <div class="node" style="left:66px;top:171px" data-anim="scale">Teach &amp; reflect</div>
+      </div>
+      <div class="legend">
+        <div class="li" data-anim="fade"><span class="sw" style="border-color:var(--gold)"></span>Your judgment</div>
+        <div class="li" data-anim="fade"><span class="sw" style="border-color:var(--sky)"></span>The AI's step</div>
+        <p class="msg" data-step="1">AI does one step. <span class="gold">The other five are yours.</span></p>
+      </div>
+    </div>
+    <span class="num">08</span>
+  </section>
+
+  <!-- 9 -->
+  <section class="slide" data-title="Anatomy of a useful prompt" data-transition="wipe" aria-label="Slide 9">
+    <p class="eyebrow" data-anim="fade">Prompting · context does the work</p>
+    <h2 data-anim="words">Anatomy of a useful prompt</h2>
+    <div class="prompt">
+      <div class="pcard weak" data-anim="left">
+        <span class="k">Vague</span>
+        <div class="code">Make a worksheet about the past simple.</div>
+        <p class="res">Typical result: generic sentences, the wrong level and nothing linked to your class. You spend the saved time fixing it.</p>
+      </div>
+      <div class="pcard strong" data-anim="right">
+        <span class="k">Specific</span>
+        <div class="pline" data-step="1"><span class="ptag">Role</span><span>You are an experienced EFL teacher in a boys' preparatory school.</span></div>
+        <div class="pline" data-step="2"><span class="ptag">Task</span><span>Create a 10-item practice worksheet on the past simple.</span></div>
+        <div class="pline" data-step="3"><span class="ptag">Context</span><span>Grade 8, mixed ability (A2 to B1). Theme: a class trip to a museum.</span></div>
+        <div class="pline" data-step="4"><span class="ptag">Format</span><span>Items 1–5 gap-fill, 6–10 error correction. Answer key at the end.</span></div>
+        <div class="pline" data-step="5"><span class="ptag">Limits</span><span>Use common irregular verbs only. Flag any item you're unsure about.</span></div>
+        <div class="review" data-step="6"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="var(--gold)" stroke-width="3" aria-hidden="true"><path d="M4 14l6 6L22 6"/></svg>Then you review every item.</div>
+      </div>
+    </div>
+    <span class="num">09</span>
+  </section>
+
+  <!-- 10 -->
+  <section class="slide" data-id="ethics" data-title="Green, amber or red?" data-transition="slide" aria-label="Slide 10">
+    <p class="eyebrow" data-anim="fade">Ethics · quick check</p>
+    <h2 data-anim="words" style="margin-bottom:26px">Green, amber or red?</h2>
+    <div class="scns">
+      <button class="scn" data-v="red" type="button" data-anim="up"><span class="q">Pasting students' names and grades into a free public chatbot to write reports</span><span class="q-hint">Click to reveal</span><span class="verdict"><b>Red</b>Personal data leaves your control. Remove names and use tools your school has approved.</span></button>
+      <button class="scn" data-v="green" type="button" data-anim="up"><span class="q">Generating one reading text at three levels, then checking each version yourself</span><span class="q-hint">Click to reveal</span><span class="verdict"><b>Green</b>Differentiation with you as the editor. No personal data, and you verify the content.</span></button>
+      <button class="scn" data-v="red" type="button" data-anim="up"><span class="q">Letting AI mark essays and sending the grades home without reading them</span><span class="q-hint">Click to reveal</span><span class="verdict"><b>Red</b>A grade is your professional judgment. AI marking can be inconsistent and you can't explain it to a parent.</span></button>
+      <button class="scn" data-v="amber" type="button" data-anim="up"><span class="q">Drafting a parent email with AI, then rewriting it in your own words</span><span class="q-hint">Click to reveal</span><span class="verdict"><b>Amber</b>Fine when no personal details go in and the final message is truly yours.</span></button>
+    </div>
+    <p class="src">Always follow your school's and ministry's current guidance on AI and data protection.</p>
+    <span class="num">10</span>
+  </section>
+
+  <!-- 11 -->
+  <section class="slide" data-title="Start small on Monday" data-transition="zoom" aria-label="Slide 11">
+    <p class="eyebrow" data-anim="fade">Next steps</p>
+    <h2 data-anim="words">Start small on Monday</h2>
+    <div class="steps">
+      <div class="st" data-step="1"><span class="n">01</span><div><h3>Pick one time-consuming task</h3><p>Levelled texts, question banks or example sentences. Try AI on it once this week.</p></div></div>
+      <div class="st" data-step="2"><span class="n">02</span><div><h3>Test it on something you know well</h3><p>Ask a question in your own subject and note exactly what it gets wrong.</p></div></div>
+      <div class="st" data-step="3"><span class="n">03</span><div><h3>Share one prompt with a colleague</h3><p>Include what worked and what you had to fix. That's how a department builds AI literacy together.</p></div></div>
+    </div>
+    <span class="num">11</span>
+  </section>
+
+  <!-- 12 -->
+  <section class="slide" data-title="AI drafts. You decide." data-transition="fade" aria-label="Slide 12">
+    <div class="close-wrap">
+      <p class="eyebrow" data-anim="fade">The one thing to remember</p>
+      <h1 data-anim="words">AI drafts. <em class="gold">You decide.</em></h1>
+      <p class="lead" data-anim="up">Understand how it works, judge what it gives you, and decide where it belongs in your teaching.</p>
+      <div class="sources" data-anim="fade" data-delay=".4">
+        <b>Sources</b>
+        OECD (2025). Results from TALIS 2024: The State of Teaching. OECD Publishing.<br>
+        UNESCO (2024). AI competency framework for teachers. Miao, F. &amp; Cukurova, M. UNESCO.
+      </div>
+    </div>
+    <div class="byline" style="position:absolute;left:110px;bottom:56px;margin:0" data-anim="fade"><span class="bar"></span><span><b>Sharief Abdelmonem</b> · AI Integration Coach</span></div>
+    <span class="num">12</span>
+  </section>
+
+  <div id="progress" aria-hidden="true"></div>
+</div>
+
+<nav id="controls" aria-label="Presentation controls">
+  <button id="bPrev" type="button" aria-label="Previous slide">← Prev</button>
+  <span id="count" aria-live="polite">1 / 12</span>
+  <button id="bNext" type="button" aria-label="Next">Next →</button>
+  <span class="sep"></span>
+  <button id="bReplay" type="button" title="Replay this slide (R)">↻ Replay</button>
+  <button id="bGrid" type="button" title="Slide list (O)">▦ Slides</button>
+  <button id="bFs" type="button" title="Full screen (F)">⤢ Full screen</button>
+</nav>
+
+<div id="overview" role="dialog" aria-modal="true" aria-label="Slide list">
+  <button class="btn" id="ovclose" type="button">Close</button>
+  <h2>Slides</h2>
+  <div id="ovgrid"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+(() => {
+  const G = window.gsap || null;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const anim = !!G && !reduce;
+  const stage = document.getElementById('stage');
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const css = getComputedStyle(document.documentElement);
+  const T = k => css.getPropertyValue(k).trim();
+  let cur = 0, busy = false, scale = 1;
+  const state = slides.map(() => ({ step: 0, tl: null }));
+
+  /* ---------- scaling ---------- */
+  function fit() {
+    scale = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+    stage.style.transform = `translate(-50%,-50%) scale(${scale})`;
+  }
+  window.addEventListener('resize', fit); fit();
+
+  /* ---------- split headline words ---------- */
+  document.querySelectorAll('[data-anim="words"]').forEach(el => {
+    const out = [];
+    Array.from(el.childNodes).forEach(n => {
+      if (n.nodeType === 3) {
+        n.textContent.split(/(\s+)/).forEach(p => {
+          if (!p) return;
+          out.push(/^\s+$/.test(p) ? ' ' : `<span class="w"><span>${p}</span></span>`);
+        });
+      } else if (n.nodeType === 1) {
+        const tag = n.tagName.toLowerCase(), cls = n.className;
+        n.textContent.split(/(\s+)/).forEach(p => {
+          if (!p) return;
+          out.push(/^\s+$/.test(p) ? ' ' : `<span class="w"><span><${tag} class="${cls}">${p}</${tag}></span></span>`);
+        });
+      }
+    });
+    el.innerHTML = out.join('');
+  });
+
+  /* ---------- entrance states ---------- */
+  const FROM = {
+    up: { y: 40, autoAlpha: 0 }, fade: { autoAlpha: 0 }, scale: { scale: .82, autoAlpha: 0 },
+    left: { x: -60, autoAlpha: 0 }, right: { x: 60, autoAlpha: 0 }
+  };
+  const stepsOf = s => { let m = 0; s.querySelectorAll('[data-step]').forEach(e => m = Math.max(m, +e.dataset.step)); return m; };
+
+  function prep(slide) {
+    const stepEls = slide.querySelectorAll('[data-step]');
+    if (!anim) { stepEls.forEach(e => e.style.visibility = 'hidden'); return; }
+    slide.querySelectorAll('[data-anim]').forEach(el => {
+      const t = el.dataset.anim;
+      if (t === 'words') { G.set(el, { autoAlpha: 1 }); G.set(el.querySelectorAll('.w>span'), { yPercent: 115 }); }
+      else G.set(el, FROM[t] || FROM.up);
+    });
+    stepEls.forEach(el => G.set(el, FROM[el.dataset.anim] || FROM.up));
+    slide.querySelectorAll('.draw').forEach(p => {
+      const L = p.getTotalLength ? p.getTotalLength() : 0;
+      if (L) G.set(p, { strokeDasharray: p.id === 'loopPath' ? '4 10' : L, strokeDashoffset: p.id === 'loopPath' ? 0 : L, autoAlpha: p.id === 'loopPath' ? 0 : 1 });
+    });
+  }
+
+  function animateIn(i) {
+    const slide = slides[i], st = state[i];
+    if (st.tl) st.tl.kill();
+    if (hooks[slide.dataset.id]?.enter) hooks[slide.dataset.id].enter(slide);
+    if (!anim) return;
+    const tl = G.timeline({ defaults: { ease: 'power3.out', duration: .8 } });
+    let at = 0;
+    slide.querySelectorAll('[data-anim]:not([data-step])').forEach(el => {
+      const d = parseFloat(el.dataset.delay || '0');
+      if (el.dataset.anim === 'words') {
+        tl.to(el.querySelectorAll('.w>span'), { yPercent: 0, stagger: .07, duration: .9, ease: 'power4.out' }, at + d);
+        at += .25;
+      } else {
+        tl.to(el, { x: 0, y: 0, scale: 1, autoAlpha: 1 }, at + d);
+        at += .1;
+      }
+    });
+    slide.querySelectorAll('.draw').forEach((p, k) => {
+      if (p.id === 'loopPath') tl.to(p, { autoAlpha: 1, duration: 1 }, .2);
+      else tl.to(p, { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut' }, .15 + k * .12);
+    });
+    st.tl = tl;
+  }
+
+  function reveal(i, k, instant) {
+    const els = slides[i].querySelectorAll(`[data-step="${k}"]`);
+    if (anim && !instant) G.to(els, { x: 0, y: 0, scale: 1, autoAlpha: 1, duration: .7, ease: 'power3.out', stagger: .1 });
+    else if (anim) G.set(els, { x: 0, y: 0, scale: 1, autoAlpha: 1 });
+    else els.forEach(e => e.style.visibility = 'visible');
+  }
+
+  /* ---------- transitions ---------- */
+  function transition(old, nw, type, dir, onMid, done) {
+    G.set(nw, { zIndex: 2 }); G.set(old, { zIndex: 1 });
+    const tl = G.timeline({ onComplete: () => { G.set([old, nw], { clearProps: 'all' }); done(); } });
+    switch (type) {
+      case 'slide':
+        tl.fromTo(nw, { xPercent: dir * 100 }, { xPercent: 0, duration: .85, ease: 'power3.inOut' }, 0)
+          .to(old, { xPercent: -dir * 30, autoAlpha: 0, duration: .85, ease: 'power3.inOut' }, 0); break;
+      case 'zoom':
+        tl.fromTo(nw, { scale: 1.1, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .8, ease: 'power2.out' }, .1)
+          .to(old, { scale: .9, autoAlpha: 0, duration: .55, ease: 'power2.in' }, 0); break;
+      case 'wipe':
+        tl.fromTo(nw, { clipPath: dir > 0 ? 'inset(0% 0% 0% 100%)' : 'inset(0% 100% 0% 0%)' },
+                      { clipPath: 'inset(0% 0% 0% 0%)', duration: .9, ease: 'power3.inOut' }, 0)
+          .to(old, { x: -dir * 80, autoAlpha: .2, duration: .9, ease: 'power3.inOut' }, 0); break;
+      default:
+        tl.fromTo(nw, { autoAlpha: 0 }, { autoAlpha: 1, duration: .6, ease: 'power1.out' }, .1)
+          .to(old, { autoAlpha: 0, duration: .45 }, 0);
+    }
+    tl.call(onMid, null, .45);
+  }
+
+  function go(n, opts = {}) {
+    if (n < 0 || n >= slides.length) return;
+    if (busy) return;
+    if (n === cur && !opts.force) return;
+    const from = cur, old = slides[from], nw = slides[n], dir = n >= from ? 1 : -1;
+    const ho = hooks[old.dataset.id]; if (ho?.leave) ho.leave(old);
+    if (state[from].tl) state[from].tl.kill();
+    cur = n; state[n].step = 0;
+    nw.classList.add('active');
+    prep(nw);
+    const mid = () => {
+      animateIn(n);
+      if (opts.full) { const m = stepsOf(nw); for (let k = 1; k <= m; k++) reveal(n, k, true); state[n].step = m; }
+    };
+    const end = () => { if (old !== nw) old.classList.remove('active'); busy = false; };
+    if (anim) G.to('.bg', { x: -n * 38, duration: 1.3, ease: 'power2.inOut' });
+    if (!anim || old === nw) { if (old !== nw) old.classList.remove('active'); mid(); }
+    else { busy = true; transition(old, nw, nw.dataset.transition || 'fade', dir, mid, end); }
+    updateUI();
+  }
+
+  function next() {
+    const s = state[cur], m = stepsOf(slides[cur]);
+    if (s.step < m) { s.step++; reveal(cur, s.step); updateUI(); }
+    else go(cur + 1);
+  }
+  function prev() { go(cur - 1, { full: true }); }
+
+  /* ---------- UI ---------- */
+  const countEl = document.getElementById('count'), prog = document.getElementById('progress');
+  function updateUI() {
+    countEl.textContent = `${cur + 1} / ${slides.length}`;
+    const m = stepsOf(slides[cur]);
+    const frac = (cur + (m ? state[cur].step / (m + 1) : 0)) / (slides.length - 1);
+    prog.style.width = (Math.min(1, frac) * 100) + '%';
+    slides.forEach((s, i) => s.setAttribute('aria-hidden', i === cur ? 'false' : 'true'));
+    const h = '#slide-' + (cur + 1);
+    if (location.hash !== h) { try { history.replaceState(null, '', h); } catch (e) {} }
+  }
+  document.getElementById('bNext').onclick = next;
+  document.getElementById('bPrev').onclick = prev;
+  document.getElementById('bReplay').onclick = () => go(cur, { force: true });
+  async function toggleFs() {
+    try {
+      if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+      else await document.exitFullscreen();
+    } catch (e) { /* full screen refused by the viewer */ }
+  }
+  document.getElementById('bFs').onclick = toggleFs;
+
+  const ov = document.getElementById('overview'), ovgrid = document.getElementById('ovgrid');
+  slides.forEach((s, i) => {
+    const b = document.createElement('button'); b.type = 'button';
+    b.innerHTML = `<span class="on">${String(i + 1).padStart(2, '0')}</span><span class="ot">${s.dataset.title}</span>`;
+    b.onclick = () => { closeOv(); go(i, { full: false }); };
+    ovgrid.appendChild(b);
+  });
+  function openOv() { ovgrid.querySelectorAll('button').forEach((b, i) => b.classList.toggle('cur', i === cur)); ov.classList.add('open'); ovgrid.children[cur].focus(); }
+  function closeOv() { ov.classList.remove('open'); }
+  document.getElementById('bGrid').onclick = openOv;
+  document.getElementById('ovclose').onclick = closeOv;
+
+  document.addEventListener('keydown', e => {
+    if (ov.classList.contains('open')) { if (e.key === 'Escape' || e.key === 'o' || e.key === 'O') closeOv(); return; }
+    const onBtn = e.target.closest && e.target.closest('button');
+    if ((e.key === ' ' || e.key === 'Enter') && onBtn) return;
+    switch (e.key) {
+      case 'ArrowRight': case 'PageDown': case ' ': e.preventDefault(); next(); break;
+      case 'ArrowLeft': case 'PageUp': e.preventDefault(); prev(); break;
+      case 'Home': go(0); break;
+      case 'End': go(slides.length - 1, { full: true }); break;
+      case 'o': case 'O': openOv(); break;
+      case 'f': case 'F': toggleFs(); break;
+      case 'r': case 'R': go(cur, { force: true }); break;
+    }
+  });
+  let tx = null;
+  stage.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchend', e => {
+    if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; tx = null;
+    if (dx < -50) next(); else if (dx > 50) prev();
+  });
+  let idle;
+  document.addEventListener('mousemove', () => { document.body.classList.add('awake'); clearTimeout(idle); idle = setTimeout(() => document.body.classList.remove('awake'), 2200); });
+
+  /* ---------- helpers ---------- */
+  function countUp(slide) {
+    slide.querySelectorAll('.count').forEach(el => {
+      const to = +el.dataset.to;
+      if (!anim) { el.textContent = to; return; }
+      const o = { v: 0 }; el.textContent = '0';
+      G.to(o, { v: to, duration: 1.6, delay: .35, ease: 'power2.out', onUpdate: () => el.textContent = Math.round(o.v) });
+    });
+  }
+
+  /* ---------- slide hooks ---------- */
+  let chart = null, loopTween = null;
+  const PRED = [
+    { pick: 'homework', c: [['homework', 46], ['essays', 22], ['projects', 14], ['phones', 6], ['other words', 12]] },
+    { pick: 'late', c: [['late', 31], ['on', 27], ['early', 9], ['today', 8], ['other words', 25]] },
+    { pick: 'because', c: [['because', 38], ['again', 17], ['yesterday', 12], ['and', 10], ['other words', 23]] },
+    { pick: 'they', c: [['they', 29], ['the', 27], ['it', 13], ['of', 9], ['other words', 22]] }
+  ];
+  let pIdx = 0;
+  const sentEl = document.getElementById('sent'), candEl = document.getElementById('cands'), pBtn = document.getElementById('predictBtn');
+  function renderPred() {
+    const added = PRED.slice(0, pIdx).map((p, k) => ` <span class="new">${p.pick}</span>`).join('');
+    sentEl.innerHTML = `The students handed in their${added}<span class="caret"></span>`;
+    candEl.innerHTML = '';
+    if (pIdx >= PRED.length) {
+      candEl.innerHTML = '<li style="grid-template-columns:1fr;color:var(--muted)">…and so on, one likely word at a time. No step checks whether any of it is true.</li>';
+      pBtn.disabled = true; return;
+    }
+    pBtn.disabled = false;
+    PRED[pIdx].c.forEach(([w, v], k) => {
+      const li = document.createElement('li'); if (k === 0) li.className = 'top';
+      li.innerHTML = `<span class="word">${w}</span><span class="track"><span class="fill" data-w="${v}"></span></span><span class="val">${v}%</span>`;
+      candEl.appendChild(li);
+    });
+    void candEl.offsetWidth;
+    setTimeout(() => candEl.querySelectorAll('.fill').forEach(f => f.style.width = (+f.dataset.w) + '%'), 40);
+  }
+  pBtn.onclick = () => {
+    if (pIdx >= PRED.length) return;
+    pIdx++; renderPred();
+    const n = sentEl.querySelectorAll('.new'); const last = n[n.length - 1];
+    if (anim && last) G.from(last, { y: 20, autoAlpha: 0, duration: .5, ease: 'back.out(2)' });
+  };
+  document.getElementById('predictReset').onclick = () => { pIdx = 0; renderPred(); };
+
+  const DIMS = [
+    ['Human-centred mindset', 'AI should serve people. Teachers keep agency over decisions about learning and keep learners’ needs and rights at the centre.', 'You decide whether AI belongs in a lesson at all.'],
+    ['Ethics of AI', 'Understanding and applying ethical principles when using AI: privacy, fairness, transparency, and safe, responsible use.', 'No identifiable student data goes into tools your school hasn’t approved.'],
+    ['AI foundations and applications', 'Knowing at a basic level how AI systems work, and judging which tools suit your goals and your students.', 'Being able to explain why a chatbot might invent a source.'],
+    ['AI pedagogy', 'Using AI to complement teaching, matched to learning goals and student needs, rather than to replace the teacher.', 'AI drafts levelled texts; you teach the reading strategy.'],
+    ['AI for professional learning', 'Using AI to support your own continuing growth and collaboration with colleagues.', 'Rehearsing a tricky explanation, or sharing tested prompts in your department.']
+  ];
+  const dimBtns = Array.from(document.querySelectorAll('.dim'));
+  function selectDim(i) {
+    dimBtns.forEach((b, k) => b.setAttribute('aria-pressed', k === i ? 'true' : 'false'));
+    document.getElementById('dN').textContent = `Dimension ${i + 1} of 5`;
+    document.getElementById('dT').textContent = DIMS[i][0];
+    document.getElementById('dD').textContent = DIMS[i][1];
+    document.getElementById('dE').innerHTML = `<b>In practice:</b> ${DIMS[i][2]}`;
+    if (anim) G.fromTo('.detail h3, .detail p', { y: 12, autoAlpha: 0 }, { y: 0, autoAlpha: 1, stagger: .06, duration: .45, ease: 'power2.out', overwrite: true });
+  }
+  dimBtns.forEach((b, i) => b.addEventListener('click', () => selectDim(i)));
+
+  const cardBtns = Array.from(document.querySelectorAll('.card'));
+  cardBtns.forEach(c => c.addEventListener('click', () => c.classList.toggle('flipped')));
+  document.getElementById('flipAll').onclick = () => {
+    const allOpen = cardBtns.every(c => c.classList.contains('flipped'));
+    cardBtns.forEach((c, i) => setTimeout(() => c.classList.toggle('flipped', !allOpen), reduce ? 0 : i * 90));
+  };
+  const scnBtns = Array.from(document.querySelectorAll('.scn'));
+  scnBtns.forEach(s => s.addEventListener('click', () => s.classList.toggle('open')));
+
+  const hooks = {
+    adoption: {
+      enter(s) {
+        countUp(s);
+        if (chart) { chart.destroy(); chart = null; }
+        if (!window.Chart) return;
+        const TEXT = T('--text'), MUTED = T('--muted');
+        const valueLabels = {
+          id: 'vl', afterDatasetsDraw(c) {
+            const ctx = c.ctx, meta = c.getDatasetMeta(0);
+            ctx.save(); ctx.font = '700 22px "Instrument Sans", sans-serif'; ctx.fillStyle = TEXT; ctx.textBaseline = 'middle';
+            meta.data.forEach((bar, i) => { const v = c.data.datasets[0].data[i]; ctx.fillText((i < 2 ? '≈ ' : '') + v + '%', bar.x + 14, bar.y); });
+            ctx.restore();
+          }
+        };
+        chart = new Chart(document.getElementById('adoptChart'), {
+          type: 'bar',
+          data: { labels: ['United Arab Emirates', 'Singapore', 'OECD average'],
+            datasets: [{ data: [75, 75, 36], backgroundColor: [T('--sky'), T('--sky'), T('--gold')], borderRadius: 8, barThickness: 50 }] },
+          options: {
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+            devicePixelRatio: (window.devicePixelRatio || 1) * Math.max(1, scale),
+            animation: anim ? { duration: 1400, easing: 'easeOutQuart', delay: c => c.type === 'data' ? 500 + c.dataIndex * 220 : 0 } : false,
+            layout: { padding: { right: 80 } },
+            scales: {
+              x: { min: 0, max: 100, border: { display: false }, grid: { color: 'rgba(155,167,192,.14)' }, ticks: { stepSize: 25, color: MUTED, font: { size: 16 }, callback: v => v + '%' } },
+              y: { border: { display: false }, grid: { display: false }, ticks: { color: TEXT, font: { size: 20, weight: '600' } } }
+            },
+            plugins: { legend: { display: false },
+              tooltip: { padding: 12, titleFont: { size: 16 }, bodyFont: { size: 16 },
+                callbacks: { label: c => (c.dataIndex < 2 ? 'About ' : '') + c.raw + '% of teachers used AI in their work' } } }
+          },
+          plugins: [valueLabels]
+        });
+      },
+      leave() { if (chart) { chart.destroy(); chart = null; } }
+    },
+    barrier: {
+      enter(s) {
+        countUp(s);
+        s.querySelectorAll('.ringp').forEach((c, k) => {
+          const C = 691.15, target = C * (1 - (+c.dataset.p) / 100);
+          if (anim) G.fromTo(c, { strokeDashoffset: C }, { strokeDashoffset: target, duration: 1.8, delay: .4 + k * .25, ease: 'power3.out' });
+          else c.setAttribute('stroke-dashoffset', target);
+        });
+      }
+    },
+    predict: { enter() { pIdx = 0; renderPred(); } },
+    cards: { enter() { cardBtns.forEach(c => c.classList.remove('flipped')); } },
+    unesco: { enter() { selectDim(0); } },
+    loop: {
+      enter() {
+        const path = document.getElementById('loopPath'), dot = document.getElementById('loopDot');
+        const L = path.getTotalLength();
+        if (loopTween) loopTween.kill();
+        if (!anim) { const p = path.getPointAtLength(0); dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y); return; }
+        const o = { t: 0 };
+        loopTween = G.to(o, { t: 1, duration: 9, repeat: -1, ease: 'none', delay: 1, onUpdate: () => {
+          const p = path.getPointAtLength(o.t * L); dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y);
+        } });
+      },
+      leave() { if (loopTween) { loopTween.kill(); loopTween = null; } }
+    },
+    ethics: { enter() { scnBtns.forEach(s => s.classList.remove('open')); } }
+  };
+
+  /* ---------- start ---------- */
+  const m = /^#slide-(\d+)$/.exec(location.hash);
+  const start = m ? Math.min(slides.length, Math.max(1, +m[1])) - 1 : 0;
+  slides.forEach((s, i) => s.classList.toggle('active', i === start));
+  cur = start;
+  prep(slides[cur]);
+  const begin = () => { animateIn(cur); if (anim) G.set('.bg', { x: -cur * 38 }); updateUI(); };
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(begin); else begin();
+  window.addEventListener('hashchange', () => {
+    const mm = /^#slide-(\d+)$/.exec(location.hash);
+    if (mm && +mm[1] - 1 !== cur) go(+mm[1] - 1, { full: true });
+  });
+})();
+</script>
+</body>
+</html>
